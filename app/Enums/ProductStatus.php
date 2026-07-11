@@ -18,4 +18,16 @@ enum ProductStatus: string
             self::Archived => 'Archived',
         };
     }
+
+    /**
+     * Tailwind badge classes for admin status chips.
+     */
+    public function color(): string
+    {
+        return match ($this) {
+            self::Active => 'bg-emerald-50 text-emerald-600',
+            self::Draft => 'bg-amber-50 text-amber-600',
+            self::Archived => 'bg-gray-100 text-gray-500',
+        };
+    }
 }

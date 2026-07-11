@@ -2,7 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\ProductController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,3 +18,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::patch('products/{product}/restore', [ProductController::class, 'restore'])
+    ->withTrashed()
+    ->name('products.restore');
+Route::patch('products/{product}/toggle-featured', [ProductController::class, 'toggleFeatured'])
+    ->name('products.toggle-featured');
+Route::resource('products', ProductController::class)->except('show');
+
+Route::resource('categories', CategoryController::class)->except('show');
+
+Route::get('logs', [ActivityLogController::class, 'index'])->name('logs.index');
