@@ -1,4 +1,5 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
+import colors from 'tailwindcss/colors';
 import forms from '@tailwindcss/forms';
 
 /** @type {import('tailwindcss').Config} */
@@ -9,10 +10,17 @@ export default {
         './resources/views/**/*.blade.php',
     ],
 
+    // Class strategy so a future theme toggle can flip dark mode per-user.
+    darkMode: 'class',
+
     theme: {
         extend: {
+            colors: {
+                // Brand color; swap this single mapping to re-theme the shop.
+                primary: colors.orange,
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Figtree', 'Noto Sans Thai', ...defaultTheme.fontFamily.sans],
             },
         },
     },
