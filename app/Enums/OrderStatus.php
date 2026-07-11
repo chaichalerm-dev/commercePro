@@ -24,6 +24,20 @@ enum OrderStatus: string
     }
 
     /**
+     * Tailwind badge classes for admin/user status chips.
+     */
+    public function color(): string
+    {
+        return match ($this) {
+            self::Pending => 'bg-amber-50 text-amber-600',
+            self::Processing => 'bg-blue-50 text-blue-600',
+            self::Shipped => 'bg-violet-50 text-violet-600',
+            self::Delivered => 'bg-emerald-50 text-emerald-600',
+            self::Cancelled => 'bg-red-50 text-red-500',
+        };
+    }
+
+    /**
      * Statuses an order can move to from the current one.
      *
      * @return list<self>
