@@ -1,0 +1,89 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Controllers\Admin;
+
+use App\Enums\BannerPosition;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\BannerRequest;
+use App\Models\ActivityLog;
+use App\Models\Banner;
+use App\Support\HomeCache;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+
+class BannerController extends Controller
+{
+    public function index(): View
+    {
+        return view('admin.banners.index', [
+            'banners' => Banner::query()->orderBy('position')->orderBy('sort_order')->paginate(15),
+        ]);
+    }
+
+    public function create(): View
+    {
+        return view('admin.banners.create', ['positions' => BannerPosition::cases()]);
+    }
+
+    public function store(BannerRequest $request): RedirectResponse
+    {
+        $banner = Banner::query()->create($this->payload($request));
+
+        ActivityLog::record('banner.created', $banner, ['title' => $banner->title]);
+        HomeCache::forget();
+
+        return redirect()->route('admin.banners.index')->with('success', "เพิ่มแบนเนอร์ \"{$banner->title}\" แล้ว");
+    }
+
+    public function edit(Banner $banner): View
+    {
+        return view('admin.banners.edit', ['banner' => $banner, 'positions' => BannerPosition::cases()]);
+    }
+
+    public function update(BannerRequest $request, Banner $banner): RedirectResponse
+    {
+        $banner->update($this->payload($request, $banner));
+
+        ActivityLog::record('banner.updated', $banner, ['title' => $banner->title]);
+        HomeCache::forget();
+
+        return redirect()->route('admin.banners.index')->with('success', "บันทึกแบนเนอร์ \"{$banner->title}\" แล้ว");
+    }
+
+    public function destroy(Banner $banner): RedirectResponse
+    {
+        $this->deleteImageFile($banner->image);
+        $banner->delete();
+
+        ActivityLog::record('banner.deleted', $banner, ['title' => $banner->title]);
+        HomeCache::forget();
+
+        return back()->with('success', "ลบแบนเนอร์ \"{$banner->title}\" แล้ว");
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function payload(BannerRequest $request, ?Banner $banner = null): array
+    {
+        $data = $request->safe()->except('image');
+
+        if ($request->hasFile('image')) {
+            $this->deleteImageFile($banner?->image);
+            $data['image'] = $request->file('image')->store('banners', 'public');
+        }
+
+        return $data;
+    }
+
+    protected function deleteImageFile(?string $path): void
+    {
+        if (filled($path) && ! Str::startsWith($path, ['http://', 'https://'])) {
+            Storage::disk('public')->delete($path);
+        }
+    }
+}

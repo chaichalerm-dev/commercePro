@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Models\ActivityLog;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Support\HomeCache;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -35,6 +36,7 @@ class ProductService
             $this->syncVariants($product, $variants);
 
             ActivityLog::record('product.created', $product, ['name' => $product->name]);
+            HomeCache::forget();
 
             return $product;
         });
@@ -76,6 +78,7 @@ class ProductService
             $this->syncVariants($product, $variants);
 
             ActivityLog::record('product.updated', $product, ['name' => $product->name, 'changes' => array_keys($product->getChanges())]);
+            HomeCache::forget();
 
             return $product->refresh();
         });
@@ -86,6 +89,7 @@ class ProductService
         $product->delete();
 
         ActivityLog::record('product.deleted', $product, ['name' => $product->name]);
+        HomeCache::forget();
     }
 
     public function restore(Product $product): void
@@ -93,6 +97,7 @@ class ProductService
         $product->restore();
 
         ActivityLog::record('product.restored', $product, ['name' => $product->name]);
+        HomeCache::forget();
     }
 
     public function toggleFeatured(Product $product): Product
@@ -100,6 +105,7 @@ class ProductService
         $product->update(['featured' => ! $product->featured]);
 
         ActivityLog::record('product.featured_toggled', $product, ['featured' => $product->featured]);
+        HomeCache::forget();
 
         return $product;
     }
