@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,5 +28,10 @@ Route::patch('products/{product}/toggle-featured', [ProductController::class, 't
 Route::resource('products', ProductController::class)->except('show');
 
 Route::resource('categories', CategoryController::class)->except('show');
+
+Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
+Route::patch('orders/{order}/payment', [OrderController::class, 'updatePayment'])->name('orders.payment');
 
 Route::get('logs', [ActivityLogController::class, 'index'])->name('logs.index');

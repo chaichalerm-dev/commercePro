@@ -40,6 +40,21 @@
 <body class="min-h-screen bg-gray-50 font-sans text-gray-800 antialiased">
     @include('partials.storefront.header')
 
+    {{-- Flash toast --}}
+    @if (session('success') || session('error'))
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 4000)"
+             x-transition.opacity.duration.300ms x-cloak
+             class="fixed right-4 top-24 z-50 flex max-w-sm items-center gap-3 rounded-xl border p-4 shadow-lg {{ session('success') ? 'border-emerald-100 bg-emerald-50 text-emerald-700' : 'border-red-100 bg-red-50 text-red-600' }}">
+            @if (session('success'))
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            @else
+                <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
+            @endif
+            <p class="text-sm font-medium">{{ session('success') ?? session('error') }}</p>
+            <button @click="show = false" class="ml-auto opacity-60 hover:opacity-100" aria-label="ปิด">✕</button>
+        </div>
+    @endif
+
     <main>
         {{ $slot }}
     </main>

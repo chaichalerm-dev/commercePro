@@ -83,44 +83,60 @@
                     {{ $product->isInStock() ? 'มีสินค้า ('.$product->stock.' ชิ้น)' : 'สินค้าหมด' }}
                 </p>
 
-                @php $variantGroups = $product->variants->groupBy('name'); @endphp
-                @foreach ($variantGroups as $groupName => $variants)
-                    <div class="mt-5" x-data="{ selected: null }">
-                        <h3 class="text-sm font-semibold text-gray-800">{{ $groupName }}</h3>
-                        <div class="mt-2 flex flex-wrap gap-2">
-                            @foreach ($variants as $variant)
-                                <button type="button" @click="selected = {{ $variant->id }}"
-                                        :class="selected === {{ $variant->id }} ? 'border-primary-500 bg-primary-50 text-primary-600' : 'border-gray-200 text-gray-600 hover:border-gray-300'"
-                                        class="rounded-xl border px-4 py-2 text-sm font-medium transition {{ $variant->stock === 0 ? 'opacity-40' : '' }}"
-                                        @disabled($variant->stock === 0)>
-                                    {{ $variant->value }}
-                                    @if ((float) $variant->price_modifier > 0)
-                                        <span class="text-xs text-gray-400">+{{ money((float) $variant->price_modifier) }}</span>
-                                    @endif
-                                </button>
-                            @endforeach
-                        </div>
-                    </div>
-                @endforeach
+                <div class="mt-6 flex flex-wrap items-start gap-3">
+                    <form method="POST" action="{{ route('cart.store') }}"
+                          x-data="{ qty: 1, max: {{ max($product->stock, 1) }}, variantId: null }"
+                          class="flex flex-wrap items-end gap-3">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <input type="hidden" name="variant_id" :value="variantId ?? ''">
+                        <input type="hidden" name="qty" :value="qty">
 
-                {{-- Qty + actions (wired to the cart in Phase 7) --}}
-                <div class="mt-6 flex flex-wrap items-center gap-3" x-data="{ qty: 1, max: {{ max($product->stock, 1) }} }">
-                    <div class="flex items-center rounded-xl border border-gray-200">
-                        <button type="button" @click="qty = Math.max(1, qty - 1)" class="px-4 py-2.5 text-gray-500 hover:text-primary-600">−</button>
-                        <span class="w-10 text-center text-sm font-semibold" x-text="qty"></span>
-                        <button type="button" @click="qty = Math.min(max, qty + 1)" class="px-4 py-2.5 text-gray-500 hover:text-primary-600">+</button>
-                    </div>
-                    <button type="button" title="ระบบตะกร้าจะเปิดใช้งานใน Phase 7"
-                            class="flex items-center gap-2 rounded-xl bg-primary-500 px-8 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-primary-600 disabled:opacity-50"
-                            @disabled(! $product->isInStock())>
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
-                        เพิ่มลงตะกร้า
-                    </button>
-                    <button type="button" title="รายการโปรดจะเปิดใช้งานใน Phase 7"
-                            class="rounded-xl border border-gray-200 p-2.5 text-gray-400 transition hover:border-red-200 hover:text-red-500" aria-label="เพิ่มในรายการโปรด">
-                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
-                    </button>
+                        @foreach ($product->variants->groupBy('name') as $groupName => $variants)
+                            <div class="w-full">
+                                <h3 class="text-sm font-semibold text-gray-800">{{ $groupName }}</h3>
+                                <div class="mt-2 flex flex-wrap gap-2">
+                                    @foreach ($variants as $variant)
+                                        <button type="button" @click="variantId = variantId === {{ $variant->id }} ? null : {{ $variant->id }}"
+                                                :class="variantId === {{ $variant->id }} ? 'border-primary-500 bg-primary-50 text-primary-600' : 'border-gray-200 text-gray-600 hover:border-gray-300'"
+                                                class="rounded-xl border px-4 py-2 text-sm font-medium transition {{ $variant->stock === 0 ? 'opacity-40' : '' }}"
+                                                @disabled($variant->stock === 0)>
+                                            {{ $variant->value }}
+                                            @if ((float) $variant->price_modifier > 0)
+                                                <span class="text-xs text-gray-400">+{{ money((float) $variant->price_modifier) }}</span>
+                                            @endif
+                                        </button>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endforeach
+
+                        <div class="flex items-center rounded-xl border border-gray-200">
+                            <button type="button" @click="qty = Math.max(1, qty - 1)" class="px-4 py-2.5 text-gray-500 hover:text-primary-600">−</button>
+                            <span class="w-10 text-center text-sm font-semibold" x-text="qty"></span>
+                            <button type="button" @click="qty = Math.min(max, qty + 1)" class="px-4 py-2.5 text-gray-500 hover:text-primary-600">+</button>
+                        </div>
+
+                        <button type="submit"
+                                class="flex items-center gap-2 rounded-xl bg-primary-500 px-8 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-primary-600 disabled:opacity-50"
+                                @disabled(! $product->isInStock())>
+                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
+                            เพิ่มลงตะกร้า
+                        </button>
+                    </form>
+
+                    <form method="POST" action="{{ route('wishlist.toggle') }}">
+                        @csrf
+                        <input type="hidden" name="product_id" value="{{ $product->id }}">
+                        <button type="submit" title="{{ auth()->check() ? 'เพิ่ม/นำออกจากรายการโปรด' : 'เข้าสู่ระบบเพื่อใช้รายการโปรด' }}"
+                                class="rounded-xl border p-2.5 transition {{ auth()->user()?->wishlists()->where('product_id', $product->id)->exists() ? 'border-red-200 bg-red-50 text-red-500' : 'border-gray-200 text-gray-400 hover:border-red-200 hover:text-red-500' }}"
+                                aria-label="รายการโปรด">
+                            <svg class="h-5 w-5" fill="{{ auth()->user()?->wishlists()->where('product_id', $product->id)->exists() ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                        </button>
+                    </form>
                 </div>
+                <x-input-error :messages="$errors->get('qty')" class="mt-2" />
+                <x-input-error :messages="$errors->get('variant_id')" class="mt-2" />
             </div>
         </div>
 

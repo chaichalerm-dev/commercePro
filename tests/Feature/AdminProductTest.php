@@ -127,6 +127,9 @@ class AdminProductTest extends TestCase
 
         $this->actingAs($this->admin)->delete("/admin/products/{$product->id}");
 
+        // Drop the "moved to trash" flash so the toast doesn't contain the name.
+        $this->flushSession();
+
         $this->get('/products')->assertDontSee($product->name);
         $this->get("/products/{$product->slug}")->assertNotFound();
     }

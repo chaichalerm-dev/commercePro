@@ -1,10 +1,14 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\CategoryController;
+use App\Http\Controllers\Storefront\CheckoutController;
 use App\Http\Controllers\Storefront\HomeController;
+use App\Http\Controllers\Storefront\OrderController;
 use App\Http\Controllers\Storefront\PageController;
 use App\Http\Controllers\Storefront\ProductController;
+use App\Http\Controllers\Storefront\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +23,37 @@ Route::get('/products/{slug}', [ProductController::class, 'show'])->name('produc
 Route::get('/category/{slug}', [CategoryController::class, 'show'])->name('categories.show');
 Route::get('/about', [PageController::class, 'about'])->name('pages.about');
 Route::get('/contact', [PageController::class, 'contact'])->name('pages.contact');
+
+/*
+|--------------------------------------------------------------------------
+| Cart (guests welcome — merged into the account at login)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
+Route::patch('/cart/{item}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/{item}', [CartController::class, 'destroy'])->name('cart.destroy');
+
+/*
+|--------------------------------------------------------------------------
+| Wishlist, checkout, and order history (login required)
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+    Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+
+    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
+    Route::post('/checkout/coupon', [CheckoutController::class, 'applyCoupon'])->name('checkout.coupon');
+    Route::delete('/checkout/coupon', [CheckoutController::class, 'removeCoupon'])->name('checkout.coupon.remove');
+    Route::post('/checkout', [CheckoutController::class, 'place'])->name('checkout.place');
+
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+});
 
 /*
 |--------------------------------------------------------------------------
