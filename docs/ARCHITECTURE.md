@@ -47,8 +47,8 @@ A full repository-per-model adds indirection without value in Laravel. We use re
 ### Database queue & cache, Redis-ready
 `QUEUE_CONNECTION=database`, `CACHE_STORE=database` work everywhere (free tiers included). Swapping to Redis later is a `.env` change only — no code changes, because all caching goes through Laravel's `Cache` facade with named keys.
 
-### UI kit: Flowbite over DaisyUI
-Flowbite is Tailwind-utility-first, pairs naturally with Alpine.js, and ships e-commerce blocks (product cards, mega menus) that match the ShopSmart mockup. DaisyUI's semantic classes would fight the custom orange/white design tokens.
+### UI: hand-built Tailwind + Alpine components (no UI kit)
+The original plan weighed Flowbite against DaisyUI, but every interactive piece the mockup needed — hero slider, dropdowns, image gallery, dynamic variant rows, toasts — turned out to be a few lines of Alpine each. Building them directly kept the bundle lean (no kit CSS/JS shipped to visitors) and matched the mockup exactly instead of approximately.
 
 ### Environments
 `.env` (local, debug on, mail → log) vs production (debug off, real SMTP, `config:cache`/`route:cache`/`view:cache` in deploy step). All environment-specific values come from `.env` — never hardcoded.

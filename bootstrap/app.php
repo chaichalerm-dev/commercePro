@@ -21,6 +21,10 @@ return Application::configure(basePath: dirname(__DIR__))
         },
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // PaaS platforms (Railway/Render) terminate TLS at their proxy;
+        // trusting it lets Laravel see the original scheme and client IP.
+        $middleware->trustProxies(at: '*');
+
         $middleware->web(append: [
             LogoutBannedUsers::class,
             SecureHeaders::class,

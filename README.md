@@ -10,11 +10,12 @@ A production-structured **e-commerce web application** built as a portfolio proj
 |---|---|
 | Backend | Laravel 12 · PHP 8.4 |
 | Database | PostgreSQL (Supabase) |
-| Frontend | Blade · Tailwind CSS · Alpine.js · Flowbite |
+| Frontend | Blade · Tailwind CSS · Alpine.js (hand-built components) |
 | Auth | Laravel Breeze (single auth, role-gated: Admin `/admin`, User `/`) |
 | Assets | Vite |
 | Queue / Cache | Database driver (Redis-ready) |
-| Charts / UX | Chart.js · SweetAlert2 · Heroicons |
+| Charts / Icons | Chart.js · Heroicons |
+| Quality | PHPUnit (94 tests) · PHPStan level 6 · Pint (PSR-12) |
 
 ## Features
 
@@ -72,25 +73,35 @@ composer run dev   # serves app + queue worker + logs + vite
 | Admin | admin@example.com | password |
 | User | user@example.com | password |
 
+### Quality Tooling
+
+```bash
+composer test      # PHPUnit feature + unit suites (SQLite in-memory)
+composer analyse   # PHPStan level 6 via Larastan
+composer format    # Laravel Pint (PSR-12)
+composer quality   # all three in sequence
+```
+
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md) — layers, patterns, request flow
 - [Database](docs/DATABASE.md) — ER diagram and table reference
+- [Deployment](docs/DEPLOYMENT.md) — Railway, Render, and VPS guides with a production checklist
 
 ## Development Milestones
 
 | Phase | Scope | Status |
 |---|---|---|
 | 1 | Project Setup & Architecture | ✅ |
-| 2 | Authentication & Role Management | ⬜ |
-| 3 | Database & Models | ⬜ |
-| 4 | User Interface | ⬜ |
-| 5 | Admin Dashboard | ⬜ |
-| 6 | Product Management | ⬜ |
-| 7 | Cart, Wishlist & Orders | ⬜ |
-| 8 | Performance & Security | ⬜ |
-| 9 | Testing & Code Review | ⬜ |
-| 10 | Deployment & Documentation | ⬜ |
+| 2 | Authentication & Role Management | ✅ |
+| 3 | Database & Models | ✅ |
+| 4 | User Interface | ✅ |
+| 5 | Admin Dashboard | ✅ |
+| 6 | Product Management | ✅ |
+| 7 | Cart, Wishlist & Orders | ✅ |
+| 8 | Performance & Security | ✅ |
+| 9 | Testing & Code Review | ✅ |
+| 10 | Deployment & Documentation | ✅ |
 
 ## License
 
