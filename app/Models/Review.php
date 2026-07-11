@@ -48,6 +48,9 @@ class Review extends Model
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * @param  Builder<Review>  $query
+     */
     #[Scope]
     protected function approved(Builder $query): void
     {

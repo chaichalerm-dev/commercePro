@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -21,7 +22,7 @@ class CustomerController extends Controller
             ->withSum(['orders as total_spent' => fn ($query) => $query->where('payment_status', PaymentStatus::Paid)], 'grand_total')
             ->when(filled($request->query('q')), function ($query) use ($request): void {
                 $term = trim((string) $request->query('q'));
-                $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+                $operator = DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
                 $query->whereAny(['name', 'email', 'phone'], $operator, "%{$term}%");
             })
             ->latest()

@@ -28,6 +28,8 @@ class ActivityLog extends Model
 
     /**
      * Write an audit entry for the current request.
+     *
+     * @param  array<string, mixed>  $properties
      */
     public static function record(string $action, ?Model $subject = null, array $properties = []): self
     {
@@ -49,6 +51,9 @@ class ActivityLog extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function subject(): MorphTo
     {
         return $this->morphTo();

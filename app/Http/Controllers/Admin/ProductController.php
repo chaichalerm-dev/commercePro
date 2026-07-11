@@ -14,6 +14,7 @@ use App\Services\ProductService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -32,7 +33,7 @@ class ProductController extends Controller
             ->with('category')
             ->when(filled($request->query('q')), function ($query) use ($request): void {
                 $term = trim((string) $request->query('q'));
-                $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+                $operator = DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
                 $query->whereAny(['name', 'sku'], $operator, "%{$term}%");
             })
             ->when(filled($request->query('category')), fn ($query) => $query->where('category_id', $request->integer('category')))
@@ -71,7 +72,7 @@ class ProductController extends Controller
 
         return redirect()
             ->route('admin.products.index')
-            ->with('success', "เพิ่มสินค้า \"{$product->name}\" เรียบร้อยแล้ว");
+            ->with('success', "à¹€à¸žà¸´à¹ˆà¸¡à¸ªà¸´à¸™à¸„à¹‰à¸² \"{$product->name}\" à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢à¹à¸¥à¹‰à¸§");
     }
 
     public function edit(Product $product): View
@@ -100,7 +101,7 @@ class ProductController extends Controller
 
         return redirect()
             ->route('admin.products.index')
-            ->with('success', "บันทึกสินค้า \"{$product->name}\" เรียบร้อยแล้ว");
+            ->with('success', "à¸šà¸±à¸™à¸—à¸¶à¸à¸ªà¸´à¸™à¸„à¹‰à¸² \"{$product->name}\" à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢à¹à¸¥à¹‰à¸§");
     }
 
     public function destroy(Product $product): RedirectResponse
@@ -109,7 +110,7 @@ class ProductController extends Controller
 
         $this->service->delete($product);
 
-        return back()->with('success', "ย้ายสินค้า \"{$product->name}\" ไปถังขยะแล้ว");
+        return back()->with('success', "à¸¢à¹‰à¸²à¸¢à¸ªà¸´à¸™à¸„à¹‰à¸² \"{$product->name}\" à¹„à¸›à¸–à¸±à¸‡à¸‚à¸¢à¸°à¹à¸¥à¹‰à¸§");
     }
 
     public function restore(Product $product): RedirectResponse
@@ -118,7 +119,7 @@ class ProductController extends Controller
 
         $this->service->restore($product);
 
-        return back()->with('success', "กู้คืนสินค้า \"{$product->name}\" เรียบร้อยแล้ว");
+        return back()->with('success', "à¸à¸¹à¹‰à¸„à¸·à¸™à¸ªà¸´à¸™à¸„à¹‰à¸² \"{$product->name}\" à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢à¹à¸¥à¹‰à¸§");
     }
 
     public function toggleFeatured(Product $product): RedirectResponse
@@ -128,7 +129,7 @@ class ProductController extends Controller
         $product = $this->service->toggleFeatured($product);
 
         return back()->with('success', $product->featured
-            ? "ตั้ง \"{$product->name}\" เป็นสินค้าแนะนำแล้ว"
-            : "นำ \"{$product->name}\" ออกจากสินค้าแนะนำแล้ว");
+            ? "à¸•à¸±à¹‰à¸‡ \"{$product->name}\" à¹€à¸›à¹‡à¸™à¸ªà¸´à¸™à¸„à¹‰à¸²à¹à¸™à¸°à¸™à¸³à¹à¸¥à¹‰à¸§"
+            : "à¸™à¸³ \"{$product->name}\" à¸­à¸­à¸à¸ˆà¸²à¸à¸ªà¸´à¸™à¸„à¹‰à¸²à¹à¸™à¸°à¸™à¸³à¹à¸¥à¹‰à¸§");
     }
 }

@@ -16,7 +16,7 @@ class BannerFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => fake()->catchPhrase(),
+            'title' => ucwords(fake()->words(3, true)),
             'subtitle' => fake()->sentence(),
             'image' => 'https://picsum.photos/seed/'.fake()->unique()->uuid().'/1600/600',
             'link' => '/products',

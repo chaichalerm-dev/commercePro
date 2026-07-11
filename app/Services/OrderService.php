@@ -59,7 +59,8 @@ class OrderService
                     throw ValidationException::withMessages(['cart' => "สินค้า \"{$product->name}\" เหลือเพียง {$available} ชิ้น กรุณาปรับจำนวนในตะกร้า"]);
                 }
 
-                $unitPrice = round((float) $product->price + (float) ($variant?->price_modifier ?? 0), 2);
+                $modifier = $variant !== null ? (float) $variant->price_modifier : 0.0;
+                $unitPrice = round((float) $product->price + $modifier, 2);
                 $lineTotal = round($unitPrice * $item->qty, 2);
                 $subtotal += $lineTotal;
 

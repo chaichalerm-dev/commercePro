@@ -42,6 +42,9 @@ class Address extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return Attribute<non-falsy-string, never>
+     */
     protected function fullAddress(): Attribute
     {
         return Attribute::get(

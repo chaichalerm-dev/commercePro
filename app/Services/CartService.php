@@ -53,7 +53,8 @@ class CartService
             ->where('product_variant_id', $variant?->id)
             ->first();
 
-        $newQty = min(($item?->qty ?? 0) + $qty, $this->availableStock($product, $variant));
+        $currentQty = $item !== null ? $item->qty : 0;
+        $newQty = min($currentQty + $qty, $this->availableStock($product, $variant));
 
         if ($newQty < 1) {
             throw ValidationException::withMessages(['qty' => 'สินค้านี้หมดสต็อกแล้ว']);

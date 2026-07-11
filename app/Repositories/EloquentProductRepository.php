@@ -10,6 +10,7 @@ use App\Repositories\Contracts\ProductRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class EloquentProductRepository implements ProductRepositoryInterface
 {
@@ -19,7 +20,7 @@ class EloquentProductRepository implements ProductRepositoryInterface
             ->when(filled($filters['q'] ?? null), function (Builder $query) use ($filters): void {
                 $term = trim((string) $filters['q']);
                 // ilike is Postgres-only; sqlite's like is already case-insensitive.
-                $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+                $operator = DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
                 $query->whereAny(['name', 'description', 'sku'], $operator, "%{$term}%");
             })
             ->when(filled($filters['category'] ?? null), fn (Builder $query) => $query

@@ -9,7 +9,20 @@ use Database\Factories\CouponFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 
+/**
+ * @property int $id
+ * @property string $code
+ * @property CouponType $type
+ * @property numeric-string $value
+ * @property numeric-string $min_order
+ * @property ?int $max_uses
+ * @property int $used_count
+ * @property ?Carbon $starts_at
+ * @property ?Carbon $expires_at
+ * @property bool $is_active
+ */
 class Coupon extends Model
 {
     /** @use HasFactory<CouponFactory> */

@@ -61,12 +61,18 @@ class Category extends Model
         return $this->hasMany(Product::class);
     }
 
+    /**
+     * @param  Builder<Category>  $query
+     */
     #[Scope]
     protected function active(Builder $query): void
     {
         $query->where('is_active', true);
     }
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function imageUrl(): Attribute
     {
         return Attribute::get(fn (): string => $this->resolveImageUrl($this->image));

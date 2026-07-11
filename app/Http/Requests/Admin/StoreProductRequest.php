@@ -48,7 +48,7 @@ class StoreProductRequest extends FormRequest
         $this->merge([
             'featured' => $this->boolean('featured'),
             // Drop rows the admin added but left completely empty.
-            'variants' => collect($this->input('variants', []))
+            'variants' => collect((array) $this->input('variants', []))
                 ->filter(fn (array $variant): bool => filled($variant['name'] ?? null) || filled($variant['value'] ?? null))
                 ->values()
                 ->all(),

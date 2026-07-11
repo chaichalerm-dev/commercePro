@@ -18,6 +18,22 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property int $category_id
+ * @property string $sku
+ * @property string $slug
+ * @property string $name
+ * @property ?string $description
+ * @property numeric-string $price
+ * @property ?numeric-string $compare_at_price
+ * @property int $stock
+ * @property ?string $thumbnail
+ * @property ProductStatus $status
+ * @property bool $featured
+ * @property-read string $thumbnail_url
+ * @property-read ?int $discount_percent
+ */
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
@@ -106,24 +122,36 @@ class Product extends Model
         return $this->reviews()->where('is_approved', true);
     }
 
+    /**
+     * @param  Builder<Product>  $query
+     */
     #[Scope]
     protected function active(Builder $query): void
     {
         $query->where('status', ProductStatus::Active);
     }
 
+    /**
+     * @param  Builder<Product>  $query
+     */
     #[Scope]
     protected function featured(Builder $query): void
     {
         $query->where('featured', true);
     }
 
+    /**
+     * @param  Builder<Product>  $query
+     */
     #[Scope]
     protected function inStock(Builder $query): void
     {
         $query->where('stock', '>', 0);
     }
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function thumbnailUrl(): Attribute
     {
         return Attribute::get(fn (): string => $this->resolveImageUrl($this->thumbnail));
@@ -132,18 +160,16 @@ class Product extends Model
     /**
      * Discount percentage derived from compare_at_price, e.g. 20 for -20%.
      */
-    protected function discountPercent(): Attribute
+    protected function getDiscountPercentAttribute(): ?int
     {
-        return Attribute::get(function (): ?int {
-            $compareAt = (float) $this->compare_at_price;
-            $price = (float) $this->price;
+        $compareAt = (float) $this->compare_at_price;
+        $price = (float) $this->price;
 
-            if ($compareAt <= $price) {
-                return null;
-            }
+        if ($compareAt <= $price) {
+            return null;
+        }
 
-            return (int) round((1 - $price / $compareAt) * 100);
-        });
+        return (int) round((1 - $price / $compareAt) * 100);
     }
 
     public function isInStock(): bool

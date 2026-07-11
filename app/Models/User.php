@@ -14,6 +14,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property int $id
+ * @property UserRole $role_id
+ * @property string $name
+ * @property string $email
+ * @property ?string $phone
+ * @property ?string $avatar
+ * @property UserStatus $status
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */

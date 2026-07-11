@@ -1,0 +1,21 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: 6
+
+    # Casts declared in casts() are authoritative; without this PHPStan's
+    # schema-derived string types fight the enum casts everywhere.
+    treatPhpDocTypesAsCertain: false
+
+    paths:
+        - app
+        - database
+        - routes
+
+    excludePaths:
+        - database/migrations (?)
+        # Breeze-published scaffolding kept as shipped.
+        - app/Http/Controllers/Auth/VerifyEmailController.php
+
+    reportUnmatchedIgnoredErrors: false

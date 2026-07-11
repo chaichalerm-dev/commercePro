@@ -42,6 +42,8 @@ class ProductVariant extends Model
 
     /**
      * Final unit price: base product price plus this variant's modifier.
+     *
+     * @return Attribute<float, never>
      */
     protected function finalPrice(): Attribute
     {

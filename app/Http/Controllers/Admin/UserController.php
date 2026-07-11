@@ -12,6 +12,7 @@ use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -22,7 +23,7 @@ class UserController extends Controller
             ->with('role')
             ->when(filled($request->query('q')), function ($query) use ($request): void {
                 $term = trim((string) $request->query('q'));
-                $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+                $operator = DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
                 $query->whereAny(['name', 'email'], $operator, "%{$term}%");
             })
             ->when(filled($request->query('role')), fn ($query) => $query->where('role_id', $request->integer('role')))
@@ -39,7 +40,7 @@ class UserController extends Controller
     public function updateRole(Request $request, User $user): RedirectResponse
     {
         if ($user->is($request->user())) {
-            return back()->with('error', 'ไม่สามารถเปลี่ยนบทบาทของตัวเองได้');
+            return back()->with('error', 'à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¸šà¸—à¸šà¸²à¸—à¸‚à¸­à¸‡à¸•à¸±à¸§à¹€à¸­à¸‡à¹„à¸”à¹‰');
         }
 
         $validated = $request->validate(['role_id' => ['required', Rule::enum(UserRole::class)]]);
@@ -48,13 +49,13 @@ class UserController extends Controller
 
         ActivityLog::record('user.role_changed', $user, ['role' => $user->role_id->name]);
 
-        return back()->with('success', "เปลี่ยนบทบาทของ {$user->name} เป็น {$user->role_id->label()} แล้ว");
+        return back()->with('success', "à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¸šà¸—à¸šà¸²à¸—à¸‚à¸­à¸‡ {$user->name} à¹€à¸›à¹‡à¸™ {$user->role_id->label()} à¹à¸¥à¹‰à¸§");
     }
 
     public function toggleBan(Request $request, User $user): RedirectResponse
     {
         if ($user->is($request->user())) {
-            return back()->with('error', 'ไม่สามารถระงับบัญชีของตัวเองได้');
+            return back()->with('error', 'à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸£à¸°à¸‡à¸±à¸šà¸šà¸±à¸à¸Šà¸µà¸‚à¸­à¸‡à¸•à¸±à¸§à¹€à¸­à¸‡à¹„à¸”à¹‰');
         }
 
         $user->update(['status' => $user->isBanned() ? UserStatus::Active : UserStatus::Banned]);
@@ -62,7 +63,7 @@ class UserController extends Controller
         ActivityLog::record('user.status_changed', $user, ['status' => $user->status->value]);
 
         return back()->with('success', $user->isBanned()
-            ? "ระงับบัญชี {$user->name} แล้ว"
-            : "ปลดระงับบัญชี {$user->name} แล้ว");
+            ? "à¸£à¸°à¸‡à¸±à¸šà¸šà¸±à¸à¸Šà¸µ {$user->name} à¹à¸¥à¹‰à¸§"
+            : "à¸›à¸¥à¸”à¸£à¸°à¸‡à¸±à¸šà¸šà¸±à¸à¸Šà¸µ {$user->name} à¹à¸¥à¹‰à¸§");
     }
 }

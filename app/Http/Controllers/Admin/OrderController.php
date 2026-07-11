@@ -12,6 +12,7 @@ use App\Services\OrderService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class OrderController extends Controller
@@ -27,7 +28,7 @@ class OrderController extends Controller
             ->withCount('items')
             ->when(filled($request->query('q')), function ($query) use ($request): void {
                 $term = trim((string) $request->query('q'));
-                $operator = $query->getConnection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+                $operator = DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
                 $query->where(fn ($sub) => $sub
                     ->where('order_number', $operator, "%{$term}%")
                     ->orWhereHas('user', fn ($user) => $user->where('name', $operator, "%{$term}%")));
@@ -63,7 +64,7 @@ class OrderController extends Controller
 
         $this->service->transition($order, OrderStatus::from($validated['status']));
 
-        return back()->with('success', "อัปเดตสถานะเป็น \"{$order->refresh()->status->label()}\" แล้ว");
+        return back()->with('success', "à¸­à¸±à¸›à¹€à¸”à¸•à¸ªà¸–à¸²à¸™à¸°à¹€à¸›à¹‡à¸™ \"{$order->refresh()->status->label()}\" à¹à¸¥à¹‰à¸§");
     }
 
     public function updatePayment(Request $request, Order $order): RedirectResponse
@@ -74,6 +75,6 @@ class OrderController extends Controller
 
         $this->service->updatePaymentStatus($order, PaymentStatus::from($validated['payment_status']));
 
-        return back()->with('success', 'อัปเดตสถานะการชำระเงินแล้ว');
+        return back()->with('success', 'à¸­à¸±à¸›à¹€à¸”à¸•à¸ªà¸–à¸²à¸™à¸°à¸à¸²à¸£à¸Šà¸³à¸£à¸°à¹€à¸‡à¸´à¸™à¹à¸¥à¹‰à¸§');
     }
 }

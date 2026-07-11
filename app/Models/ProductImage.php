@@ -30,6 +30,9 @@ class ProductImage extends Model
         return $this->belongsTo(Product::class);
     }
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function url(): Attribute
     {
         return Attribute::get(fn (): string => $this->resolveImageUrl($this->path));

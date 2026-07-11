@@ -14,6 +14,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property string $order_number
+ * @property int $user_id
+ * @property ?int $address_id
+ * @property ?int $coupon_id
+ * @property numeric-string $subtotal
+ * @property numeric-string $discount
+ * @property numeric-string $shipping
+ * @property numeric-string $tax
+ * @property numeric-string $grand_total
+ * @property OrderStatus $status
+ * @property PaymentStatus $payment_status
+ */
 class Order extends Model
 {
     /** @use HasFactory<OrderFactory> */

@@ -12,7 +12,6 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Collection as BaseCollection;
 use Illuminate\Support\Facades\DB;
 
 class DashboardService
@@ -96,11 +95,12 @@ class DashboardService
     }
 
     /**
-     * Best sellers by quantity across paid orders.
+     * Best sellers by quantity across paid orders. Each row is an OrderItem
+     * carrying the qty_sold and revenue aggregate columns.
      *
-     * @return BaseCollection<int, object{product_id: ?int, product_name: string, qty_sold: int, revenue: float}>
+     * @return Collection<int, OrderItem>
      */
-    public function topProducts(int $limit = 5): BaseCollection
+    public function topProducts(int $limit = 5): Collection
     {
         return OrderItem::query()
             ->select('product_id', 'product_name')

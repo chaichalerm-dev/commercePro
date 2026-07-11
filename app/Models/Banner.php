@@ -36,18 +36,27 @@ class Banner extends Model
         ];
     }
 
+    /**
+     * @param  Builder<Banner>  $query
+     */
     #[Scope]
     protected function active(Builder $query): void
     {
         $query->where('is_active', true);
     }
 
+    /**
+     * @param  Builder<Banner>  $query
+     */
     #[Scope]
     protected function position(Builder $query, BannerPosition $position): void
     {
         $query->where('position', $position)->orderBy('sort_order');
     }
 
+    /**
+     * @return Attribute<string, never>
+     */
     protected function imageUrl(): Attribute
     {
         return Attribute::get(fn (): string => $this->resolveImageUrl($this->image));

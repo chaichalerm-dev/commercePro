@@ -56,16 +56,14 @@ class ProductService
                 $data['thumbnail'] = $this->storeImage($thumbnail);
             }
 
-            // Blank slug means "regenerate from the (possibly new) name".
-            if (blank($data['slug'] ?? null)) {
-                unset($data['slug']);
+            $product->fill($data);
 
-                if ($product->name !== ($data['name'] ?? $product->name)) {
-                    $product->slug = null;
-                }
+            // Blank slug submitted + renamed => regenerate from the new name.
+            if (blank($data['slug'] ?? null) && $product->isDirty('name')) {
+                $product->setAttribute('slug', $product->generateUniqueSlug());
             }
 
-            $product->fill($data)->save();
+            $product->save();
 
             if ($removedImageIds !== []) {
                 $product->images()->whereKey($removedImageIds)->get()->each(function ($image): void {

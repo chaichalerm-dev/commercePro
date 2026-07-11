@@ -48,6 +48,13 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        // Orders keep a restrict FK to users so purchase history stays
+        // intact — accounts with orders cannot be hard-deleted.
+        if ($user->orders()->exists()) {
+            return Redirect::route('profile.edit')
+                ->withErrors(['password' => 'บัญชีที่มีประวัติคำสั่งซื้อไม่สามารถลบได้ กรุณาติดต่อฝ่ายบริการลูกค้า'], 'userDeletion');
+        }
+
         Auth::logout();
 
         $user->delete();

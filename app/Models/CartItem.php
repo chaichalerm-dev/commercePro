@@ -10,6 +10,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property int $id
+ * @property ?int $user_id
+ * @property ?string $session_id
+ * @property int $product_id
+ * @property ?int $product_variant_id
+ * @property int $qty
+ * @property-read float $unit_price
+ * @property-read float $line_total
+ */
 class CartItem extends Model
 {
     /** @use HasFactory<CartItemFactory> */
@@ -54,6 +64,9 @@ class CartItem extends Model
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
+    /**
+     * @return Attribute<float, never>
+     */
     protected function unitPrice(): Attribute
     {
         return Attribute::get(function (): float {
@@ -63,6 +76,9 @@ class CartItem extends Model
         });
     }
 
+    /**
+     * @return Attribute<float, never>
+     */
     protected function lineTotal(): Attribute
     {
         return Attribute::get(fn (): float => round($this->unit_price * $this->qty, 2));
