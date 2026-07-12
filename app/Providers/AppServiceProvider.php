@@ -21,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(ProductRepositoryInterface::class, EloquentProductRepository::class);
+        $this->app->singleton(StorefrontComposer::class);
     }
 
     /**

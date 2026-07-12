@@ -95,6 +95,13 @@ return [
             'prefix_indexes' => true,
             'search_path' => 'public',
             'sslmode' => env('DB_SSLMODE', 'prefer'),
+            // The database is remote (Supabase), so the TLS handshake for a
+            // fresh connection costs far more than the query itself. Reusing
+            // the connection across requests on the same worker process
+            // avoids paying that handshake on every single request.
+            'options' => array_filter([
+                PDO::ATTR_PERSISTENT => env('DB_PERSISTENT', true),
+            ]),
         ],
 
         'sqlsrv' => [
