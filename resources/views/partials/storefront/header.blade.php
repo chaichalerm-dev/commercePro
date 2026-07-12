@@ -49,18 +49,59 @@
                         <span class="hidden lg:block">{{ auth()->user()->name }}</span>
                     </button>
                     <div x-show="open" x-transition.opacity x-cloak
-                         class="absolute right-0 mt-2 w-48 overflow-hidden rounded-xl border border-gray-100 bg-white py-1 shadow-lg">
+                         class="absolute right-0 mt-2 w-64 overflow-hidden rounded-xl border border-gray-100 bg-white shadow-lg">
+                        <div class="flex items-center gap-3 border-b border-gray-100 px-4 py-3">
+                            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-600">
+                                {{ mb_substr(auth()->user()->name, 0, 1) }}
+                            </span>
+                            <div class="min-w-0">
+                                <p class="truncate text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</p>
+                                <p class="truncate text-xs text-gray-500">{{ auth()->user()->email }}</p>
+                            </div>
+                        </div>
+
                         @if (auth()->user()->isAdmin())
-                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('nav.account.admin') }}</a>
+                            <div class="border-b border-gray-100 py-1">
+                                <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                    <svg class="h-5 w-5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/></svg>
+                                    {{ __('nav.account.admin') }}
+                                </a>
+                            </div>
                         @endif
-                        <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('nav.account.my_account') }}</a>
-                        <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('nav.account.my_orders') }}</a>
-                        <a href="{{ route('wishlist.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('nav.account.wishlist') }}</a>
-                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">{{ __('nav.account.edit_profile') }}</a>
-                        <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmSubmit(event, '{{ __('nav.account.logout_confirm') }}')">
-                            @csrf
-                            <button type="submit" class="block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50">{{ __('nav.account.logout') }}</button>
-                        </form>
+
+                        <div class="border-b border-gray-100 py-1">
+                            <p class="px-4 pb-1 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">{{ __('nav.account.section_account') }}</p>
+                            <a href="{{ route('dashboard') }}" class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <svg class="h-5 w-5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                                {{ __('nav.account.my_account') }}
+                            </a>
+                            <a href="{{ route('profile.edit') }}" class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <svg class="h-5 w-5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/></svg>
+                                {{ __('nav.account.edit_profile') }}
+                            </a>
+                        </div>
+
+                        <div class="border-b border-gray-100 py-1">
+                            <p class="px-4 pb-1 pt-1.5 text-[11px] font-semibold uppercase tracking-wide text-gray-400">{{ __('nav.account.section_shopping') }}</p>
+                            <a href="{{ route('orders.index') }}" class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <svg class="h-5 w-5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007z"/></svg>
+                                {{ __('nav.account.my_orders') }}
+                            </a>
+                            <a href="{{ route('wishlist.index') }}" class="flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                                <svg class="h-5 w-5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
+                                {{ __('nav.account.wishlist') }}
+                            </a>
+                        </div>
+
+                        <div class="py-1">
+                            <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmSubmit(event, '{{ __('nav.account.logout_confirm') }}')">
+                                @csrf
+                                <button type="submit" class="flex w-full items-center gap-2.5 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50">
+                                    <svg class="h-5 w-5 shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3 3m0 0l-3 3m3-3H3.75"/></svg>
+                                    {{ __('nav.account.logout') }}
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             @else
@@ -83,18 +124,22 @@
         </div>
     </div>
 
+    @php
+        $navItems = [
+            ['label' => __('nav.nav_items.home'), 'url' => route('home'), 'active' => request()->routeIs('home')],
+            ['label' => __('nav.nav_items.all_products'), 'url' => route('products.index'), 'active' => request()->routeIs('products.index') && ! request('sort') && ! request()->boolean('on_sale')],
+            ['label' => __('nav.nav_items.new_products'), 'url' => route('products.index', ['sort' => 'latest']), 'active' => request('sort') === 'latest'],
+            ['label' => __('nav.nav_items.best_sellers'), 'url' => route('products.index', ['sort' => 'popular']), 'active' => request('sort') === 'popular'],
+            ['label' => __('nav.nav_items.promotions'), 'url' => route('products.index', ['on_sale' => 1]), 'active' => request()->boolean('on_sale')],
+            ['label' => __('nav.nav_items.about'), 'url' => route('pages.about'), 'active' => request()->routeIs('pages.about')],
+            ['label' => __('nav.nav_items.contact'), 'url' => route('pages.contact'), 'active' => request()->routeIs('pages.contact')],
+        ];
+    @endphp
+
     {{-- Nav row (desktop) --}}
     <nav class="hidden border-t border-gray-100 md:block">
         <div class="mx-auto flex max-w-7xl items-center gap-1 px-4 sm:px-6 lg:px-8">
-            @foreach ([
-                ['label' => __('nav.nav_items.home'), 'url' => route('home'), 'active' => request()->routeIs('home')],
-                ['label' => __('nav.nav_items.all_products'), 'url' => route('products.index'), 'active' => request()->routeIs('products.index') && ! request('sort') && ! request()->boolean('on_sale')],
-                ['label' => __('nav.nav_items.new_products'), 'url' => route('products.index', ['sort' => 'latest']), 'active' => request('sort') === 'latest'],
-                ['label' => __('nav.nav_items.best_sellers'), 'url' => route('products.index', ['sort' => 'popular']), 'active' => request('sort') === 'popular'],
-                ['label' => __('nav.nav_items.promotions'), 'url' => route('products.index', ['on_sale' => 1]), 'active' => request()->boolean('on_sale')],
-                ['label' => __('nav.nav_items.about'), 'url' => route('pages.about'), 'active' => request()->routeIs('pages.about')],
-                ['label' => __('nav.nav_items.contact'), 'url' => route('pages.contact'), 'active' => request()->routeIs('pages.contact')],
-            ] as $item)
+            @foreach ($navItems as $item)
                 <a href="{{ $item['url'] }}"
                    class="border-b-2 px-3 py-2.5 text-sm font-medium transition {{ $item['active'] ? 'border-primary-500 text-primary-600' : 'border-transparent text-gray-600 hover:text-primary-600' }}">
                     {{ $item['label'] }}
@@ -104,18 +149,33 @@
     </nav>
 
     {{-- Mobile menu --}}
-    <div x-show="mobileOpen" x-transition x-cloak class="border-t border-gray-100 bg-white md:hidden">
+    <div x-show="mobileOpen" x-transition x-cloak class="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-gray-100 bg-white md:hidden">
         <form action="{{ route('products.index') }}" method="GET" class="p-4 pb-2">
             <input type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('nav.search.placeholder') }}"
                    class="w-full rounded-full border-gray-200 bg-gray-50 px-5 py-2.5 text-sm focus:border-primary-400 focus:ring-primary-400">
         </form>
-        <nav class="space-y-1 p-4 pt-2">
-            <a href="{{ route('home') }}" class="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">{{ __('nav.nav_items.home') }}</a>
-            <a href="{{ route('products.index') }}" class="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">{{ __('nav.nav_items.all_products') }}</a>
-            <a href="{{ route('products.index', ['on_sale' => 1]) }}" class="block rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">{{ __('nav.nav_items.promotions') }}</a>
-            @foreach ($navCategories as $navCategory)
-                <a href="{{ route('categories.show', $navCategory->slug) }}" class="block rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-50">{{ $navCategory->name }}</a>
+
+        <nav class="grid grid-cols-2 gap-2 p-4 pt-2">
+            @foreach ($navItems as $item)
+                <a href="{{ $item['url'] }}"
+                   class="truncate rounded-lg px-3 py-2.5 text-center text-sm font-medium transition {{ $item['active'] ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50' }}">
+                    {{ $item['label'] }}
+                </a>
             @endforeach
         </nav>
+
+        @if ($navCategories->isNotEmpty())
+            <div class="border-t border-gray-100 p-4 pt-3">
+                <p class="px-1 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">{{ __('nav.categories_heading') }}</p>
+                <div class="grid grid-cols-2 gap-2">
+                    @foreach ($navCategories as $navCategory)
+                        <a href="{{ route('categories.show', $navCategory->slug) }}"
+                           class="truncate rounded-lg border border-gray-200 px-3 py-2.5 text-center text-sm text-gray-600 transition hover:border-primary-300 hover:bg-primary-50 hover:text-primary-600">
+                            {{ $navCategory->name }}
+                        </a>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
 </header>

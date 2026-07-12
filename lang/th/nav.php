@@ -17,10 +17,12 @@ return [
 
     'account' => [
         'admin' => 'หลังบ้าน (Admin)',
+        'section_account' => 'บัญชี',
         'my_account' => 'บัญชีของฉัน',
+        'edit_profile' => 'แก้ไขโปรไฟล์',
+        'section_shopping' => 'การช้อปปิ้ง',
         'my_orders' => 'คำสั่งซื้อของฉัน',
         'wishlist' => 'รายการโปรด',
-        'edit_profile' => 'แก้ไขโปรไฟล์',
         'logout' => 'ออกจากระบบ',
         'logout_confirm' => 'ยืนยันออกจากระบบ?',
         'login' => 'เข้าสู่ระบบ',
@@ -32,6 +34,7 @@ return [
     ],
 
     'mobile_menu_aria' => 'เมนู',
+    'categories_heading' => 'เลือกซื้อตามหมวดหมู่',
 
     'nav_items' => [
         'home' => 'หน้าแรก',

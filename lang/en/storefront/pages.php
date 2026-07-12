@@ -12,7 +12,7 @@ return [
             'support' => ['value' => '24 hrs', 'label' => 'Customer Support'],
         ],
         'paragraph1' => ':site was founded with the intention of making online shopping easy, safe, and worthwhile. We curate quality products across a wide range of categories, from fashion and electronics to home goods, backed by fast shipping and secure payment.',
-        'paragraph2' => 'This project is a portfolio demo — built with Laravel 12, Tailwind CSS, Alpine.js, and PostgreSQL (Supabase) following Clean Architecture principles, ready to be extended into a production system.',
+        'paragraph2' => 'This website is a demo store created to showcase how an online shopping experience works. All products, prices, and other information shown are for demonstration purposes only — no real transactions or shipments take place.',
     ],
 
     'contact' => [

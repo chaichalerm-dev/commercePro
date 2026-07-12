@@ -17,10 +17,12 @@ return [
 
     'account' => [
         'admin' => 'Admin Panel',
+        'section_account' => 'Account',
         'my_account' => 'My Account',
+        'edit_profile' => 'Edit Profile',
+        'section_shopping' => 'Shopping',
         'my_orders' => 'My Orders',
         'wishlist' => 'Wishlist',
-        'edit_profile' => 'Edit Profile',
         'logout' => 'Log Out',
         'logout_confirm' => 'Confirm logout?',
         'login' => 'Log In',
@@ -32,6 +34,7 @@ return [
     ],
 
     'mobile_menu_aria' => 'Menu',
+    'categories_heading' => 'Shop by Category',
 
     'nav_items' => [
         'home' => 'Home',
