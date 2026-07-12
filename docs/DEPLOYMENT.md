@@ -91,11 +91,18 @@ Key points:
 
 ## Render
 
-1. **New → Web Service**, connect the repo, runtime **PHP**.
-2. Build command: `composer install --no-dev --optimize-autoloader && npm ci && npm run build`
-3. Start command: `php artisan migrate --force && php artisan config:cache && php artisan serve --host=0.0.0.0 --port=$PORT`
-4. Add a **Background Worker** with `php artisan queue:work --tries=3` and a **Cron Job** running `php artisan schedule:run` every minute.
-5. Attach a persistent disk mounted at `storage/app/public` if you rely on local uploads.
+Render's auto-detected "native" runtime picks a build/start flow based on which manifest files it sees (`package.json` → Node, in this repo's case) — it has no notion of "PHP" once a Node buildpack is chosen, so a start command like `php artisan serve` fails with `php: command not found`. **Use the Docker environment instead** — this repo's `Dockerfile` already handles the full build (Vite assets + Composer + Apache + queue worker via Supervisor), so Render just needs to be told to use it.
+
+**Recommended: deploy via the included `render.yaml` Blueprint**
+
+1. Render Dashboard → **New → Blueprint**, connect this repo. Render reads `render.yaml` at the repo root and creates the web service with `runtime: docker`, pointed at `./Dockerfile`, automatically — no manual build/start command config at all.
+2. Fill in the env vars marked `sync: false` in `render.yaml` (`APP_KEY`, `APP_URL`, `DB_HOST`/`DB_USERNAME`/`DB_PASSWORD`, mail credentials) in the Render dashboard.
+3. First deploy: leave `RUN_MIGRATIONS=true` (already the Blueprint's default) so `entrypoint.sh` runs `migrate --force` on boot; flip it to `false` afterwards if you'd rather run migrations manually on future deploys.
+4. The queue worker runs inside the same container via Supervisor — no separate Background Worker service needed.
+
+**If you already created the service manually as Native/Node:** Render doesn't let you switch an existing service's environment from Native to Docker after the fact — delete it and create a fresh one (via the Blueprint above, or **New → Web Service** and picking **Docker** as the runtime when prompted), rather than trying to fix the build/start commands on the Node-typed service.
+
+**Scheduler:** add a **Cron Job** service running `php artisan schedule:run` every minute (Render Cron Jobs use the same Docker image, so no extra setup — just override the command).
 
 ## VPS (Ubuntu + nginx)
 
