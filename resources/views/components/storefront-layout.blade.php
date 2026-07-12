@@ -51,7 +51,7 @@
                 <svg class="h-5 w-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/></svg>
             @endif
             <p class="text-sm font-medium">{{ session('success') ?? session('error') }}</p>
-            <button @click="show = false" class="ml-auto opacity-60 hover:opacity-100" aria-label="ปิด">✕</button>
+            <button @click="show = false" class="ml-auto opacity-60 hover:opacity-100" aria-label="{{ __('common.close') }}">✕</button>
         </div>
     @endif
 
@@ -60,5 +60,7 @@
     </main>
 
     @include('partials.storefront.footer')
+
+    <x-confirm-dialog />
 </body>
 </html>

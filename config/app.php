@@ -78,11 +78,27 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'locale' => env('APP_LOCALE', 'th'),
 
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Available Locales
+    |--------------------------------------------------------------------------
+    |
+    | Locales the UI language switcher and SetLocale middleware will accept.
+    | Keys are Laravel locale codes; values are the labels shown in the
+    | switcher dropdown.
+    |
+    */
+
+    'available_locales' => [
+        'th' => 'ไทย',
+        'en' => 'English',
+    ],
 
     /*
     |--------------------------------------------------------------------------

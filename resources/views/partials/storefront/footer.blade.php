@@ -28,32 +28,32 @@
         </div>
 
         <div>
-            <h3 class="text-sm font-semibold text-white">บริการลูกค้า</h3>
+            <h3 class="text-sm font-semibold text-white">{{ __('nav.footer.customer_service') }}</h3>
             <ul class="mt-4 space-y-2.5 text-sm text-gray-400">
-                <li><a href="{{ route('pages.contact') }}" class="hover:text-primary-400">วิธีการสั่งซื้อ</a></li>
-                <li><a href="{{ route('pages.contact') }}" class="hover:text-primary-400">การชำระเงิน</a></li>
-                <li><a href="{{ route('pages.contact') }}" class="hover:text-primary-400">การจัดส่งสินค้า</a></li>
-                <li><a href="{{ route('pages.contact') }}" class="hover:text-primary-400">การคืนสินค้า</a></li>
+                <li><a href="{{ route('pages.contact') }}" class="hover:text-primary-400">{{ __('nav.footer.how_to_order') }}</a></li>
+                <li><a href="{{ route('pages.contact') }}" class="hover:text-primary-400">{{ __('nav.footer.payment') }}</a></li>
+                <li><a href="{{ route('pages.contact') }}" class="hover:text-primary-400">{{ __('nav.footer.shipping') }}</a></li>
+                <li><a href="{{ route('pages.contact') }}" class="hover:text-primary-400">{{ __('nav.footer.returns') }}</a></li>
             </ul>
         </div>
 
         <div>
-            <h3 class="text-sm font-semibold text-white">ข้อมูลบริษัท</h3>
+            <h3 class="text-sm font-semibold text-white">{{ __('nav.footer.company_info') }}</h3>
             <ul class="mt-4 space-y-2.5 text-sm text-gray-400">
-                <li><a href="{{ route('pages.about') }}" class="hover:text-primary-400">เกี่ยวกับเรา</a></li>
-                <li><a href="{{ route('pages.contact') }}" class="hover:text-primary-400">ติดต่อเรา</a></li>
-                <li><a href="{{ route('pages.about') }}" class="hover:text-primary-400">ร่วมงานกับเรา</a></li>
-                <li><a href="{{ route('pages.about') }}" class="hover:text-primary-400">นโยบายความเป็นส่วนตัว</a></li>
+                <li><a href="{{ route('pages.about') }}" class="hover:text-primary-400">{{ __('nav.footer.about_us') }}</a></li>
+                <li><a href="{{ route('pages.contact') }}" class="hover:text-primary-400">{{ __('nav.footer.contact_us') }}</a></li>
+                <li><a href="{{ route('pages.about') }}" class="hover:text-primary-400">{{ __('nav.footer.careers') }}</a></li>
+                <li><a href="{{ route('pages.about') }}" class="hover:text-primary-400">{{ __('nav.footer.privacy_policy') }}</a></li>
             </ul>
         </div>
 
         <div>
-            <h3 class="text-sm font-semibold text-white">ติดต่อเรา</h3>
+            <h3 class="text-sm font-semibold text-white">{{ __('nav.footer.contact_heading') }}</h3>
             <ul class="mt-4 space-y-2.5 text-sm text-gray-400">
-                @if ($contactPhone)<li>โทร: {{ $contactPhone }}</li>@endif
-                @if ($contactEmail)<li>อีเมล: {{ $contactEmail }}</li>@endif
+                @if ($contactPhone)<li>{{ __('nav.footer.phone', ['phone' => $contactPhone]) }}</li>@endif
+                @if ($contactEmail)<li>{{ __('nav.footer.email', ['email' => $contactEmail]) }}</li>@endif
                 <li class="pt-2">
-                    <span class="text-xs text-gray-500">เดโมโปรเจคสำหรับ Portfolio<br>ไม่มีการซื้อขายจริง</span>
+                    <span class="text-xs text-gray-500">{{ __('nav.footer.demo_line1') }}<br>{{ __('nav.footer.demo_line2') }}</span>
                 </li>
             </ul>
         </div>
@@ -61,7 +61,7 @@
 
     <div class="border-t border-gray-800">
         <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-gray-500 sm:flex-row sm:px-6 lg:px-8">
-            <p>© {{ now()->year }} {{ $siteName }}. All rights reserved.</p>
+            <p>{{ __('nav.footer.copyright', ['year' => now()->year, 'site' => $siteName]) }}</p>
             <div class="flex gap-2">
                 @foreach (['VISA', 'MasterCard', 'JCB', 'PromptPay'] as $payment)
                     <span class="rounded bg-gray-800 px-2 py-1 font-semibold text-gray-400">{{ $payment }}</span>

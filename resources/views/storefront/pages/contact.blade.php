@@ -4,37 +4,37 @@
     $contactAddress = \App\Models\Setting::get('contact_address');
 @endphp
 
-<x-storefront-layout title="ติดต่อเรา" description="ช่องทางติดต่อทีมงาน ShopSmart พร้อมให้บริการทุกวัน">
+<x-storefront-layout :title="__('storefront/pages.contact.title')" :description="__('storefront/pages.contact.description')">
     <div class="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-        <x-breadcrumb :items="['ติดต่อเรา' => null]" />
+        <x-breadcrumb :items="[__('storefront/pages.contact.title') => null]" />
 
-        <h1 class="mt-6 text-2xl font-bold text-gray-900">ติดต่อเรา</h1>
-        <p class="mt-1 text-sm text-gray-500">ทีมงานพร้อมให้บริการและตอบทุกคำถามของคุณ</p>
+        <h1 class="mt-6 text-2xl font-bold text-gray-900">{{ __('storefront/pages.contact.heading') }}</h1>
+        <p class="mt-1 text-sm text-gray-500">{{ __('storefront/pages.contact.subheading') }}</p>
 
         <div class="mt-6 grid gap-4 sm:grid-cols-3">
             <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-                <p class="text-sm font-semibold text-gray-800">โทรศัพท์</p>
+                <p class="text-sm font-semibold text-gray-800">{{ __('storefront/pages.contact.phone_label') }}</p>
                 <p class="mt-1 text-sm text-primary-600">{{ $contactPhone ?? '-' }}</p>
-                <p class="mt-1 text-xs text-gray-400">ทุกวัน 09:00 – 21:00 น.</p>
+                <p class="mt-1 text-xs text-gray-400">{{ __('storefront/pages.contact.phone_hours') }}</p>
             </div>
             <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-                <p class="text-sm font-semibold text-gray-800">อีเมล</p>
+                <p class="text-sm font-semibold text-gray-800">{{ __('storefront/pages.contact.email_label') }}</p>
                 <p class="mt-1 text-sm text-primary-600">{{ $contactEmail ?? '-' }}</p>
-                <p class="mt-1 text-xs text-gray-400">ตอบกลับภายใน 24 ชั่วโมง</p>
+                <p class="mt-1 text-xs text-gray-400">{{ __('storefront/pages.contact.email_response') }}</p>
             </div>
             <div class="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-                <p class="text-sm font-semibold text-gray-800">ที่อยู่</p>
+                <p class="text-sm font-semibold text-gray-800">{{ __('storefront/pages.contact.address_label') }}</p>
                 <p class="mt-1 text-sm text-gray-600">{{ $contactAddress ?? '-' }}</p>
             </div>
         </div>
 
         <div class="mt-8 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-8">
-            <h2 class="text-lg font-bold text-gray-900">คำถามที่พบบ่อย</h2>
+            <h2 class="text-lg font-bold text-gray-900">{{ __('storefront/pages.contact.faq_heading') }}</h2>
             <div class="mt-4 divide-y divide-gray-100">
                 @foreach ([
-                    ['q' => 'สั่งซื้อสินค้าอย่างไร?', 'a' => 'เลือกสินค้าที่ต้องการ เพิ่มลงตะกร้า จากนั้นทำตามขั้นตอนการชำระเงิน (ระบบเดโม ไม่มีการตัดเงินจริง)'],
-                    ['q' => 'จัดส่งใช้เวลากี่วัน?', 'a' => 'โดยปกติ 1-3 วันทำการสำหรับกรุงเทพฯ และ 3-5 วันทำการสำหรับต่างจังหวัด'],
-                    ['q' => 'คืนสินค้าได้ไหม?', 'a' => 'คืนสินค้าได้ฟรีภายใน 7 วันหลังได้รับสินค้า หากสินค้ามีปัญหาหรือไม่ตรงตามที่สั่ง'],
+                    __('storefront/pages.contact.faq.order'),
+                    __('storefront/pages.contact.faq.shipping'),
+                    __('storefront/pages.contact.faq.returns'),
                 ] as $faq)
                     <details class="group py-3">
                         <summary class="flex cursor-pointer items-center justify-between text-sm font-medium text-gray-800 marker:content-none">

@@ -57,7 +57,7 @@ class CartService
         $newQty = min($currentQty + $qty, $this->availableStock($product, $variant));
 
         if ($newQty < 1) {
-            throw ValidationException::withMessages(['qty' => 'สินค้านี้หมดสต็อกแล้ว']);
+            throw ValidationException::withMessages(['qty' => __('storefront/cart.errors.out_of_stock')]);
         }
 
         if ($item !== null) {
@@ -175,11 +175,11 @@ class CartService
     protected function assertPurchasable(Product $product, ?ProductVariant $variant): void
     {
         if (! $product->isInStock() || $product->status !== ProductStatus::Active) {
-            throw ValidationException::withMessages(['qty' => 'สินค้านี้ไม่พร้อมจำหน่ายในขณะนี้']);
+            throw ValidationException::withMessages(['qty' => __('storefront/cart.errors.not_purchasable')]);
         }
 
         if ($variant !== null && $variant->product_id !== $product->id) {
-            throw ValidationException::withMessages(['variant_id' => 'ตัวเลือกสินค้าไม่ถูกต้อง']);
+            throw ValidationException::withMessages(['variant_id' => __('storefront/cart.errors.invalid_variant')]);
         }
     }
 

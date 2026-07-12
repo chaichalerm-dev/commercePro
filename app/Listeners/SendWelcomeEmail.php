@@ -14,7 +14,7 @@ class SendWelcomeEmail
     public function handle(Registered $event): void
     {
         if ($event->user instanceof User) {
-            Mail::to($event->user)->queue(new WelcomeMail($event->user));
+            Mail::to($event->user)->locale(app()->getLocale())->queue(new WelcomeMail($event->user));
         }
     }
 }

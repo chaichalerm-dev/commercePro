@@ -1,8 +1,8 @@
-<x-storefront-layout title="ชำระเงิน">
+<x-storefront-layout :title="__('storefront/checkout.title')">
     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <x-breadcrumb :items="['ตะกร้าสินค้า' => route('cart.index'), 'ชำระเงิน' => null]" />
-        <h1 class="mt-4 text-2xl font-bold text-gray-900">ชำระเงิน</h1>
-        <p class="mt-1 text-sm text-amber-600">⚠ ระบบเดโม — ไม่มีการตัดเงินจริง</p>
+        <x-breadcrumb :items="[__('storefront/checkout.breadcrumb.cart') => route('cart.index'), __('storefront/checkout.breadcrumb.checkout') => null]" />
+        <h1 class="mt-4 text-2xl font-bold text-gray-900">{{ __('storefront/checkout.title') }}</h1>
+        <p class="mt-1 text-sm text-amber-600">⚠ {{ __('storefront/checkout.demo_notice') }}</p>
 
         <x-input-error :messages="$errors->get('cart')" class="mt-3" />
 
@@ -13,7 +13,7 @@
             <div class="space-y-4">
                 {{-- Address --}}
                 <section class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                    <h2 class="font-semibold text-gray-900">ที่อยู่จัดส่ง</h2>
+                    <h2 class="font-semibold text-gray-900">{{ __('storefront/checkout.address_heading') }}</h2>
 
                     @if ($addresses->isNotEmpty())
                         <div class="mt-3 space-y-2" x-show="addressMode === 'existing'">
@@ -23,58 +23,58 @@
                                            class="mt-0.5 border-gray-300 text-primary-500 focus:ring-primary-400">
                                     <span class="text-sm">
                                         <span class="font-medium text-gray-800">{{ $address->recipient }} · {{ $address->phone }}</span>
-                                        @if ($address->is_default)<span class="ml-1 rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-bold text-primary-600">ค่าเริ่มต้น</span>@endif
+                                        @if ($address->is_default)<span class="ml-1 rounded bg-primary-100 px-1.5 py-0.5 text-[10px] font-bold text-primary-600">{{ __('storefront/checkout.default_badge') }}</span>@endif
                                         <span class="mt-0.5 block text-gray-500">{{ $address->full_address }}</span>
                                     </span>
                                 </label>
                             @endforeach
-                            <button type="button" @click="addressMode = 'new'" class="text-sm font-medium text-primary-600 hover:underline">+ ใช้ที่อยู่ใหม่</button>
+                            <button type="button" @click="addressMode = 'new'" class="text-sm font-medium text-primary-600 hover:underline">{{ __('storefront/checkout.use_new_address') }}</button>
                         </div>
                     @endif
 
                     <div class="mt-3 grid gap-3 sm:grid-cols-2" x-show="addressMode === 'new'" x-cloak>
                         <template x-if="addressMode === 'new'"><input type="hidden" name="address_id" value=""></template>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">ชื่อผู้รับ</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('storefront/checkout.fields.recipient') }}</label>
                             <input type="text" name="recipient" value="{{ old('recipient') }}" class="mt-1.5 w-full rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
                             <x-input-error :messages="$errors->get('recipient')" class="mt-1" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">เบอร์โทรศัพท์</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('storefront/checkout.fields.phone') }}</label>
                             <input type="text" name="phone" value="{{ old('phone') }}" class="mt-1.5 w-full rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
                             <x-input-error :messages="$errors->get('phone')" class="mt-1" />
                         </div>
                         <div class="sm:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700">ที่อยู่ (บ้านเลขที่ ถนน)</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('storefront/checkout.address_line1_label') }}</label>
                             <input type="text" name="line1" value="{{ old('line1') }}" class="mt-1.5 w-full rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
                             <x-input-error :messages="$errors->get('line1')" class="mt-1" />
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700">เขต/อำเภอ</label>
+                            <label class="block text-sm font-medium text-gray-700">{{ __('storefront/checkout.fields.district') }}</label>
                             <input type="text" name="district" value="{{ old('district') }}" class="mt-1.5 w-full rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
                             <x-input-error :messages="$errors->get('district')" class="mt-1" />
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">จังหวัด</label>
+                                <label class="block text-sm font-medium text-gray-700">{{ __('storefront/checkout.fields.province') }}</label>
                                 <input type="text" name="province" value="{{ old('province') }}" class="mt-1.5 w-full rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
                                 <x-input-error :messages="$errors->get('province')" class="mt-1" />
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">รหัสไปรษณีย์</label>
+                                <label class="block text-sm font-medium text-gray-700">{{ __('storefront/checkout.fields.postal_code') }}</label>
                                 <input type="text" name="postal_code" value="{{ old('postal_code') }}" class="mt-1.5 w-full rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
                                 <x-input-error :messages="$errors->get('postal_code')" class="mt-1" />
                             </div>
                         </div>
                         @if ($addresses->isNotEmpty())
-                            <button type="button" @click="addressMode = 'existing'" class="text-left text-sm font-medium text-primary-600 hover:underline">← ใช้ที่อยู่เดิม</button>
+                            <button type="button" @click="addressMode = 'existing'" class="text-left text-sm font-medium text-primary-600 hover:underline">{{ __('storefront/checkout.use_existing_address') }}</button>
                         @endif
                     </div>
                 </section>
 
                 {{-- Items --}}
                 <section class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                    <h2 class="font-semibold text-gray-900">รายการสินค้า ({{ $items->sum('qty') }} ชิ้น)</h2>
+                    <h2 class="font-semibold text-gray-900">{{ __('storefront/checkout.items_heading', ['count' => $items->sum('qty')]) }}</h2>
                     <ul class="mt-3 divide-y divide-gray-50">
                         @foreach ($items as $item)
                             <li class="flex items-center gap-3 py-3">
@@ -96,36 +96,36 @@
             {{-- Summary --}}
             <aside class="h-fit space-y-4 lg:sticky lg:top-32">
                 <section class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                    <h2 class="font-semibold text-gray-900">คูปองส่วนลด</h2>
+                    <h2 class="font-semibold text-gray-900">{{ __('storefront/checkout.coupon_heading') }}</h2>
                     @if ($coupon)
                         <div class="mt-3 flex items-center justify-between rounded-xl bg-emerald-50 px-3.5 py-2.5">
                             <span class="text-sm font-semibold text-emerald-700">{{ $coupon->code }}</span>
-                            <button type="submit" form="remove-coupon" class="text-xs text-red-500 hover:underline">นำออก</button>
+                            <button type="submit" form="remove-coupon" class="text-xs text-red-500 hover:underline">{{ __('storefront/checkout.coupon_remove') }}</button>
                         </div>
                     @else
                         <div class="mt-3 flex gap-2">
-                            <input type="text" form="apply-coupon" name="code" placeholder="เช่น WELCOME10"
+                            <input type="text" form="apply-coupon" name="code" placeholder="{{ __('storefront/checkout.coupon_placeholder') }}"
                                    class="w-full rounded-xl border-gray-200 text-sm uppercase focus:border-primary-400 focus:ring-primary-400">
-                            <button type="submit" form="apply-coupon" class="shrink-0 rounded-xl bg-gray-900 px-4 text-sm font-medium text-white transition hover:bg-gray-700">ใช้</button>
+                            <button type="submit" form="apply-coupon" class="shrink-0 rounded-xl bg-gray-900 px-4 text-sm font-medium text-white transition hover:bg-gray-700">{{ __('storefront/checkout.coupon_apply') }}</button>
                         </div>
                     @endif
                 </section>
 
                 <section class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-                    <h2 class="font-semibold text-gray-900">สรุปยอด</h2>
+                    <h2 class="font-semibold text-gray-900">{{ __('storefront/checkout.summary_heading') }}</h2>
                     <dl class="mt-4 space-y-2 text-sm">
-                        <div class="flex justify-between"><dt class="text-gray-500">ยอดรวมสินค้า</dt><dd class="font-medium">{{ money($subtotal) }}</dd></div>
+                        <div class="flex justify-between"><dt class="text-gray-500">{{ __('storefront/checkout.subtotal') }}</dt><dd class="font-medium">{{ money($subtotal) }}</dd></div>
                         @if ($discount > 0)
-                            <div class="flex justify-between text-emerald-600"><dt>ส่วนลดคูปอง</dt><dd>-{{ money($discount) }}</dd></div>
+                            <div class="flex justify-between text-emerald-600"><dt>{{ __('storefront/checkout.discount') }}</dt><dd>-{{ money($discount) }}</dd></div>
                         @endif
-                        <div class="flex justify-between"><dt class="text-gray-500">ค่าจัดส่ง</dt><dd class="font-medium">{{ $shipping > 0 ? money($shipping) : 'ฟรี' }}</dd></div>
+                        <div class="flex justify-between"><dt class="text-gray-500">{{ __('storefront/checkout.shipping') }}</dt><dd class="font-medium">{{ $shipping > 0 ? money($shipping) : __('storefront/checkout.free') }}</dd></div>
                     </dl>
                     <div class="mt-4 flex justify-between border-t border-gray-100 pt-4">
-                        <span class="font-semibold">ยอดชำระทั้งหมด</span>
+                        <span class="font-semibold">{{ __('storefront/checkout.grand_total') }}</span>
                         <span class="text-xl font-bold text-primary-600">{{ money($grandTotal) }}</span>
                     </div>
                     <button type="submit" class="mt-5 w-full rounded-xl bg-primary-500 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-primary-600">
-                        ยืนยันคำสั่งซื้อ (เดโม)
+                        {{ __('storefront/checkout.place_order') }}
                     </button>
                     <x-input-error :messages="$errors->get('coupon')" class="mt-2" />
                 </section>

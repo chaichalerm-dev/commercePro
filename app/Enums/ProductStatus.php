@@ -12,11 +12,7 @@ enum ProductStatus: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Active => 'Active',
-            self::Draft => 'Draft',
-            self::Archived => 'Archived',
-        };
+        return __('enums.product_status.'.$this->value);
     }
 
     /**

@@ -1,2 +1,2 @@
-<x-error-page code="500" title="เกิดข้อผิดพลาดในระบบ"
-               message="ขออภัย เกิดข้อผิดพลาดที่ไม่คาดคิด ทีมงานได้รับแจ้งแล้ว กรุณาลองใหม่อีกครั้งในภายหลัง" />
+<x-error-page code="500" :title="__('errors.500.title')"
+               :message="__('errors.500.message')" />

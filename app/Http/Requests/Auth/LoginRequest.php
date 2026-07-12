@@ -30,6 +30,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'portal' => ['required', 'in:user,admin'],
         ];
     }
 
@@ -55,6 +56,22 @@ class LoginRequest extends FormRequest
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.banned'),
+            ]);
+        }
+
+        $isAdminAccount = Auth::user()->isAdmin();
+        $wantsAdminPortal = $this->input('portal') === 'admin';
+
+        // Deliberately reuse the generic "invalid credentials" message here
+        // instead of a specific "wrong tab" message: a distinct message would
+        // let an attacker confirm a guessed email/password pair is correct
+        // (just submitted on the wrong tab), leaking account existence/role.
+        if ($wantsAdminPortal !== $isAdminAccount) {
+            Auth::guard('web')->logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
             ]);
         }
 

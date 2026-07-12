@@ -32,7 +32,7 @@ class ReviewController extends Controller
 
         ActivityLog::record('review.moderated', $review, ['approved' => $review->is_approved]);
 
-        return back()->with('success', $review->is_approved ? 'อนุมัติรีวิวแล้ว' : 'ซ่อนรีวิวแล้ว');
+        return back()->with('success', $review->is_approved ? __('admin/reviews.flash.approved') : __('admin/reviews.flash.hidden'));
     }
 
     public function destroy(Review $review): RedirectResponse
@@ -41,6 +41,6 @@ class ReviewController extends Controller
 
         ActivityLog::record('review.deleted', $review, ['product_id' => $review->product_id]);
 
-        return back()->with('success', 'ลบรีวิวแล้ว');
+        return back()->with('success', __('admin/reviews.flash.deleted'));
     }
 }

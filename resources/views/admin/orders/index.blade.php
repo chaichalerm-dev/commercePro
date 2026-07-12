@@ -1,22 +1,22 @@
-<x-admin-layout title="จัดการคำสั่งซื้อ">
+<x-admin-layout :title="__('admin/orders.title')">
     <form method="GET" class="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm">
-        <input type="search" name="q" value="{{ request('q') }}" placeholder="ค้นหาเลขที่ออเดอร์ หรือชื่อลูกค้า..."
+        <input type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('admin/orders.filters.search_placeholder') }}"
                class="w-64 rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
         <select name="status" class="rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
-            <option value="">ทุกสถานะ</option>
+            <option value="">{{ __('admin/orders.filters.all_statuses') }}</option>
             @foreach ($statuses as $status)
                 <option value="{{ $status->value }}" @selected(request('status') === $status->value)>{{ $status->label() }}</option>
             @endforeach
         </select>
         <select name="payment" class="rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
-            <option value="">การชำระเงินทั้งหมด</option>
+            <option value="">{{ __('admin/orders.filters.all_payment_statuses') }}</option>
             @foreach ($paymentStatuses as $status)
                 <option value="{{ $status->value }}" @selected(request('payment') === $status->value)>{{ $status->label() }}</option>
             @endforeach
         </select>
-        <button type="submit" class="rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700">กรอง</button>
+        <button type="submit" class="rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700">{{ __('admin/orders.filters.submit') }}</button>
         @if (request()->hasAny(['q', 'status', 'payment']))
-            <a href="{{ route('admin.orders.index') }}" class="text-sm text-gray-400 hover:text-gray-600">ล้างตัวกรอง</a>
+            <a href="{{ route('admin.orders.index') }}" class="text-sm text-gray-400 hover:text-gray-600">{{ __('admin/orders.filters.clear') }}</a>
         @endif
     </form>
 
@@ -25,14 +25,14 @@
             <table class="w-full text-left text-sm">
                 <thead class="bg-gray-50 text-xs uppercase text-gray-400">
                     <tr>
-                        <th class="px-5 py-3 font-medium">เลขที่</th>
-                        <th class="px-5 py-3 font-medium">ลูกค้า</th>
-                        <th class="px-5 py-3 font-medium">รายการ</th>
-                        <th class="px-5 py-3 font-medium">ยอดรวม</th>
-                        <th class="px-5 py-3 font-medium">สถานะ</th>
-                        <th class="px-5 py-3 font-medium">ชำระเงิน</th>
-                        <th class="px-5 py-3 font-medium">วันที่</th>
-                        <th class="px-5 py-3 text-right font-medium">จัดการ</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/orders.table.order_number') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/orders.table.customer') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/orders.table.items') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/orders.table.total') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/orders.table.status') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/orders.table.payment') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/orders.table.date') }}</th>
+                        <th class="px-5 py-3 text-right font-medium">{{ __('admin/orders.table.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -47,11 +47,11 @@
                             <td class="px-5 py-3 text-gray-400">{{ $order->created_at->format('d/m/Y') }}</td>
                             <td class="px-5 py-3 text-right">
                                 <a href="{{ route('admin.orders.show', $order) }}"
-                                   class="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 transition hover:bg-blue-100">ดูรายละเอียด</a>
+                                   class="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 transition hover:bg-blue-100">{{ __('admin/orders.table.view_details') }}</a>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8" class="px-5 py-10 text-center text-gray-400">ไม่พบคำสั่งซื้อ</td></tr>
+                        <tr><td colspan="8" class="px-5 py-10 text-center text-gray-400">{{ __('admin/orders.empty_state') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>

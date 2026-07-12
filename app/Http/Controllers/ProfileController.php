@@ -52,7 +52,7 @@ class ProfileController extends Controller
         // intact — accounts with orders cannot be hard-deleted.
         if ($user->orders()->exists()) {
             return Redirect::route('profile.edit')
-                ->withErrors(['password' => 'บัญชีที่มีประวัติคำสั่งซื้อไม่สามารถลบได้ กรุณาติดต่อฝ่ายบริการลูกค้า'], 'userDeletion');
+                ->withErrors(['password' => __('Accounts with an order history cannot be deleted. Please contact customer support.')], 'userDeletion');
         }
 
         Auth::logout();

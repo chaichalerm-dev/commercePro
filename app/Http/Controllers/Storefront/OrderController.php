@@ -43,6 +43,6 @@ class OrderController extends Controller
 
         $this->orders->cancel($order);
 
-        return back()->with('success', "ยกเลิกคำสั่งซื้อ {$order->order_number} แล้ว");
+        return back()->with('success', __('storefront/orders.flash.cancelled', ['number' => $order->order_number]));
     }
 }

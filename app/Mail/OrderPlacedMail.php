@@ -23,7 +23,7 @@ class OrderPlacedMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: "ยืนยันคำสั่งซื้อ {$this->order->order_number} — ShopSmart",
+            subject: __('mail.order_placed.subject', ['order_number' => $this->order->order_number]),
         );
     }
 

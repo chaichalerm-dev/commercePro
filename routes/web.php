@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LocaleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Storefront\CartController;
 use App\Http\Controllers\Storefront\CategoryController;
@@ -11,6 +12,14 @@ use App\Http\Controllers\Storefront\ProductController;
 use App\Http\Controllers\Storefront\SeoController;
 use App\Http\Controllers\Storefront\WishlistController;
 use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Locale
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/locale/{locale}', LocaleController::class)->name('locale.switch');
 
 /*
 |--------------------------------------------------------------------------

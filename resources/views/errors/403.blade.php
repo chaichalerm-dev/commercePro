@@ -1,2 +1,2 @@
-<x-error-page code="403" title="ไม่มีสิทธิ์เข้าถึง"
-               message="คุณไม่มีสิทธิ์เข้าถึงหน้านี้ หากคิดว่าเป็นข้อผิดพลาด กรุณาติดต่อผู้ดูแลระบบ" />
+<x-error-page code="403" :title="__('errors.403.title')"
+               :message="__('errors.403.message')" />

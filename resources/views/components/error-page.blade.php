@@ -6,8 +6,8 @@
         <h1 class="mt-4 text-2xl font-bold text-gray-900">{{ $title }}</h1>
         <p class="mt-2 max-w-md text-sm text-gray-500">{{ $message }}</p>
         <div class="mt-8 flex gap-3">
-            <a href="{{ route('home') }}" class="rounded-xl bg-primary-500 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-primary-600">กลับหน้าแรก</a>
-            <a href="{{ route('products.index') }}" class="rounded-xl border border-gray-200 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50">ดูสินค้าทั้งหมด</a>
+            <a href="{{ route('home') }}" class="rounded-xl bg-primary-500 px-6 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-primary-600">{{ __('errors.back_home') }}</a>
+            <a href="{{ route('products.index') }}" class="rounded-xl border border-gray-200 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50">{{ __('errors.browse_products') }}</a>
         </div>
     </div>
 </x-storefront-layout>

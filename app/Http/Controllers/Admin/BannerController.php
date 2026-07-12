@@ -36,7 +36,7 @@ class BannerController extends Controller
         ActivityLog::record('banner.created', $banner, ['title' => $banner->title]);
         HomeCache::forget();
 
-        return redirect()->route('admin.banners.index')->with('success', "เพิ่มแบนเนอร์ \"{$banner->title}\" แล้ว");
+        return redirect()->route('admin.banners.index')->with('success', __('admin/banners.flash.created', ['title' => $banner->title]));
     }
 
     public function edit(Banner $banner): View
@@ -51,7 +51,7 @@ class BannerController extends Controller
         ActivityLog::record('banner.updated', $banner, ['title' => $banner->title]);
         HomeCache::forget();
 
-        return redirect()->route('admin.banners.index')->with('success', "บันทึกแบนเนอร์ \"{$banner->title}\" แล้ว");
+        return redirect()->route('admin.banners.index')->with('success', __('admin/banners.flash.updated', ['title' => $banner->title]));
     }
 
     public function destroy(Banner $banner): RedirectResponse
@@ -62,7 +62,7 @@ class BannerController extends Controller
         ActivityLog::record('banner.deleted', $banner, ['title' => $banner->title]);
         HomeCache::forget();
 
-        return back()->with('success', "ลบแบนเนอร์ \"{$banner->title}\" แล้ว");
+        return back()->with('success', __('admin/banners.flash.deleted', ['title' => $banner->title]));
     }
 
     /**

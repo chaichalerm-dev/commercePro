@@ -36,7 +36,7 @@ class CartController extends Controller
 
         $this->cart->add($product, $variant, $request->integer('qty'));
 
-        return redirect()->route('cart.index')->with('success', "เพิ่ม \"{$product->name}\" ลงตะกร้าแล้ว");
+        return redirect()->route('cart.index')->with('success', __('storefront/cart.flash.added', ['product' => $product->name]));
     }
 
     public function update(Request $request, int $item): RedirectResponse
@@ -52,6 +52,6 @@ class CartController extends Controller
     {
         $this->cart->remove($this->cart->findItem($item));
 
-        return back()->with('success', 'นำสินค้าออกจากตะกร้าแล้ว');
+        return back()->with('success', __('storefront/cart.flash.removed'));
     }
 }

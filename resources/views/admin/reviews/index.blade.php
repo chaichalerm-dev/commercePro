@@ -1,6 +1,6 @@
-<x-admin-layout title="รีวิวสินค้า">
+<x-admin-layout :title="__('admin/reviews.title')">
     <div class="flex items-center gap-2">
-        @foreach (['' => 'ทั้งหมด', 'approved' => 'อนุมัติแล้ว', 'pending' => 'รออนุมัติ'] as $value => $label)
+        @foreach (['' => __('admin/reviews.filters.all'), 'approved' => __('admin/reviews.filters.approved'), 'pending' => __('admin/reviews.filters.pending')] as $value => $label)
             <a href="{{ route('admin.reviews.index', $value ? ['status' => $value] : []) }}"
                class="rounded-xl px-4 py-2 text-sm font-medium {{ request('status', '') === $value ? 'bg-primary-500 text-white shadow' : 'bg-white text-gray-600 hover:bg-gray-50' }}">
                 {{ $label }}
@@ -17,10 +17,10 @@
                         <x-star-rating :rating="$review->rating" />
                         <span class="text-xs text-gray-400">{{ $review->created_at->format('d/m/Y') }}</span>
                         <span class="rounded-full px-2 py-0.5 text-xs font-medium {{ $review->is_approved ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600' }}">
-                            {{ $review->is_approved ? 'แสดงบนเว็บ' : 'รออนุมัติ' }}
+                            {{ $review->is_approved ? __('admin/reviews.status.shown') : __('admin/reviews.status.pending') }}
                         </span>
                     </div>
-                    <p class="mt-1 text-xs text-primary-600">สินค้า: {{ $review->product->name }}</p>
+                    <p class="mt-1 text-xs text-primary-600">{{ __('admin/reviews.product_label', ['name' => $review->product->name]) }}</p>
                     @if ($review->comment)
                         <p class="mt-2 text-sm text-gray-600">{{ $review->comment }}</p>
                     @endif
@@ -29,17 +29,17 @@
                     <form method="POST" action="{{ route('admin.reviews.toggle', $review) }}">
                         @csrf @method('PATCH')
                         <button type="submit" class="rounded-lg px-3 py-1.5 text-xs font-medium transition {{ $review->is_approved ? 'bg-amber-50 text-amber-600 hover:bg-amber-100' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100' }}">
-                            {{ $review->is_approved ? 'ซ่อน' : 'อนุมัติ' }}
+                            {{ $review->is_approved ? __('admin/reviews.actions.hide') : __('admin/reviews.actions.approve') }}
                         </button>
                     </form>
-                    <form method="POST" action="{{ route('admin.reviews.destroy', $review) }}" onsubmit="return confirm('ลบรีวิวนี้?')">
+                    <form method="POST" action="{{ route('admin.reviews.destroy', $review) }}" onsubmit="return confirmSubmit(event, '{{ __('admin/reviews.confirm.delete') }}')">
                         @csrf @method('DELETE')
-                        <button type="submit" class="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-500 transition hover:bg-red-100">ลบ</button>
+                        <button type="submit" class="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-500 transition hover:bg-red-100">{{ __('admin/reviews.actions.delete') }}</button>
                     </form>
                 </div>
             </div>
         @empty
-            <div class="rounded-2xl border border-dashed border-gray-200 bg-white py-12 text-center text-gray-400">ไม่พบรีวิว</div>
+            <div class="rounded-2xl border border-dashed border-gray-200 bg-white py-12 text-center text-gray-400">{{ __('admin/reviews.empty_state') }}</div>
         @endforelse
     </div>
 

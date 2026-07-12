@@ -29,7 +29,7 @@ class CheckoutController extends Controller
         $items = $this->cart->items();
 
         if ($items->isEmpty()) {
-            return redirect()->route('cart.index')->with('error', 'ตะกร้าสินค้าของคุณว่างเปล่า');
+            return redirect()->route('cart.index')->with('error', __('storefront/checkout.flash.cart_empty'));
         }
 
         $subtotal = $this->cart->subtotal();
@@ -56,19 +56,19 @@ class CheckoutController extends Controller
         $coupon = Coupon::query()->where('code', strtoupper(trim($validated['code'])))->first();
 
         if ($coupon === null || ! $coupon->isRedeemable($this->cart->subtotal())) {
-            return back()->with('error', 'คูปองไม่ถูกต้อง หมดอายุ หรือยอดสั่งซื้อไม่ถึงขั้นต่ำ');
+            return back()->with('error', __('storefront/checkout.flash.coupon_invalid'));
         }
 
         session()->put(self::COUPON_SESSION_KEY, $coupon->code);
 
-        return back()->with('success', "ใช้คูปอง {$coupon->code} แล้ว");
+        return back()->with('success', __('storefront/checkout.flash.coupon_applied', ['code' => $coupon->code]));
     }
 
     public function removeCoupon(): RedirectResponse
     {
         session()->forget(self::COUPON_SESSION_KEY);
 
-        return back()->with('success', 'นำคูปองออกแล้ว');
+        return back()->with('success', __('storefront/checkout.flash.coupon_removed'));
     }
 
     public function place(CheckoutRequest $request): RedirectResponse
@@ -85,7 +85,7 @@ class CheckoutController extends Controller
 
         return redirect()
             ->route('orders.show', $order)
-            ->with('success', "สั่งซื้อสำเร็จ! หมายเลขคำสั่งซื้อของคุณคือ {$order->order_number}");
+            ->with('success', __('storefront/checkout.flash.order_placed', ['number' => $order->order_number]));
     }
 
     protected function resolveAddress(CheckoutRequest $request): Address
@@ -96,7 +96,7 @@ class CheckoutController extends Controller
 
         return $request->user()->addresses()->create([
             ...$request->safe()->only(['recipient', 'phone', 'line1', 'district', 'province', 'postal_code']),
-            'label' => 'ที่อยู่จัดส่ง',
+            'label' => __('storefront/checkout.default_address_label'),
             'is_default' => ! $request->user()->addresses()->exists(),
         ]);
     }

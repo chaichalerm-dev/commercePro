@@ -14,9 +14,6 @@ enum UserRole: int
 
     public function label(): string
     {
-        return match ($this) {
-            self::Admin => 'Administrator',
-            self::User => 'Customer',
-        };
+        return __('enums.user_role.'.strtolower($this->name));
     }
 }

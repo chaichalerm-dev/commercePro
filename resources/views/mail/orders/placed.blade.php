@@ -1,27 +1,27 @@
 <x-mail::message>
-# ขอบคุณสำหรับคำสั่งซื้อ!
+# {{ __('mail.order_placed.heading') }}
 
-สวัสดีคุณ {{ $order->user->name }} — เราได้รับคำสั่งซื้อ **{{ $order->order_number }}** ของคุณเรียบร้อยแล้ว
+{{ __('mail.order_placed.greeting', ['name' => $order->user->name, 'order_number' => $order->order_number]) }}
 
 <x-mail::table>
-| สินค้า | จำนวน | ราคา |
+| {{ __('mail.order_placed.table_product') }} | {{ __('mail.order_placed.table_qty') }} | {{ __('mail.order_placed.table_price') }} |
 |:--|:-:|--:|
 @foreach ($order->items as $item)
 | {{ $item->product_name }} | {{ $item->qty }} | {{ money((float) $item->total) }} |
 @endforeach
-| **ค่าจัดส่ง** | | {{ money((float) $order->shipping) }} |
+| **{{ __('mail.order_placed.shipping') }}** | | {{ money((float) $order->shipping) }} |
 @if ((float) $order->discount > 0)
-| **ส่วนลด** | | -{{ money((float) $order->discount) }} |
+| **{{ __('mail.order_placed.discount') }}** | | -{{ money((float) $order->discount) }} |
 @endif
-| **ยอดรวมทั้งสิ้น** | | **{{ money((float) $order->grand_total) }}** |
+| **{{ __('mail.order_placed.grand_total') }}** | | **{{ money((float) $order->grand_total) }}** |
 </x-mail::table>
 
-**จัดส่งไปที่:** {{ $order->address?->recipient }}, {{ $order->address?->full_address }}
+**{{ __('mail.order_placed.shipping_to') }}** {{ $order->address?->recipient }}, {{ $order->address?->full_address }}
 
 <x-mail::button :url="route('orders.show', $order)">
-ดูรายละเอียดคำสั่งซื้อ
+{{ __('mail.order_placed.cta') }}
 </x-mail::button>
 
-ขอบคุณที่ช้อปกับเรา<br>
-ทีมงาน {{ config('app.name') }}
+{{ __('mail.order_placed.thanks') }}<br>
+{{ __('mail.order_placed.team', ['app' => config('app.name')]) }}
 </x-mail::message>

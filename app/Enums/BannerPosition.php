@@ -11,9 +11,6 @@ enum BannerPosition: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Hero => 'Hero slider',
-            self::Promo => 'Promo banner',
-        };
+        return __('enums.banner_position.'.$this->value);
     }
 }

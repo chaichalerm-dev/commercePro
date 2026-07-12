@@ -1,14 +1,14 @@
-<x-admin-layout title="ผู้ใช้งาน">
+<x-admin-layout :title="__('admin/users.title')">
     <form method="GET" class="flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm">
-        <input type="search" name="q" value="{{ request('q') }}" placeholder="ค้นหาชื่อ หรืออีเมล..."
+        <input type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('admin/users.filters.search_placeholder') }}"
                class="w-64 rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
         <select name="role" class="rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
-            <option value="">ทุกบทบาท</option>
+            <option value="">{{ __('admin/users.filters.all_roles') }}</option>
             @foreach ($roles as $role)
                 <option value="{{ $role->value }}" @selected(request('role') == $role->value)>{{ $role->label() }}</option>
             @endforeach
         </select>
-        <button type="submit" class="rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700">กรอง</button>
+        <button type="submit" class="rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700">{{ __('admin/users.filters.submit') }}</button>
     </form>
 
     <div class="mt-4 overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
@@ -16,18 +16,18 @@
             <table class="w-full text-left text-sm">
                 <thead class="bg-gray-50 text-xs uppercase text-gray-400">
                     <tr>
-                        <th class="px-5 py-3 font-medium">ผู้ใช้</th>
-                        <th class="px-5 py-3 font-medium">บทบาท</th>
-                        <th class="px-5 py-3 font-medium">สถานะ</th>
-                        <th class="px-5 py-3 font-medium">สมัครเมื่อ</th>
-                        <th class="px-5 py-3 text-right font-medium">จัดการ</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/users.table.user') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/users.table.role') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/users.table.status') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/users.table.joined_at') }}</th>
+                        <th class="px-5 py-3 text-right font-medium">{{ __('admin/users.table.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
                     @forelse ($users as $user)
                         <tr class="hover:bg-gray-50/60">
                             <td class="px-5 py-3">
-                                <p class="font-medium text-gray-800">{{ $user->name }} @if($user->is(auth()->user()))<span class="text-xs text-primary-500">(คุณ)</span>@endif</p>
+                                <p class="font-medium text-gray-800">{{ $user->name }} @if($user->is(auth()->user()))<span class="text-xs text-primary-500">{{ __('admin/users.table.you_label') }}</span>@endif</p>
                                 <p class="text-xs text-gray-400">{{ $user->email }}</p>
                             </td>
                             <td class="px-5 py-3">
@@ -54,17 +54,17 @@
                             <td class="px-5 py-3 text-right">
                                 @unless ($user->is(auth()->user()))
                                     <form method="POST" action="{{ route('admin.users.toggle-ban', $user) }}" class="inline"
-                                          onsubmit="return confirm('{{ $user->isBanned() ? 'ปลดระงับบัญชีนี้?' : 'ระงับบัญชีนี้?' }}')">
+                                          onsubmit="return confirmSubmit(event, '{{ $user->isBanned() ? __('admin/users.confirm.unban') : __('admin/users.confirm.ban') }}')">
                                         @csrf @method('PATCH')
                                         <button type="submit" class="rounded-lg px-3 py-1.5 text-xs font-medium transition {{ $user->isBanned() ? 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100' : 'bg-red-50 text-red-500 hover:bg-red-100' }}">
-                                            {{ $user->isBanned() ? 'ปลดระงับ' : 'ระงับบัญชี' }}
+                                            {{ $user->isBanned() ? __('admin/users.actions.unban') : __('admin/users.actions.ban') }}
                                         </button>
                                     </form>
                                 @endunless
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="px-5 py-10 text-center text-gray-400">ไม่พบผู้ใช้</td></tr>
+                        <tr><td colspan="5" class="px-5 py-10 text-center text-gray-400">{{ __('admin/users.empty_state') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>

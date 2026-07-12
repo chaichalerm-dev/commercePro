@@ -1,10 +1,10 @@
-<x-admin-layout title="จัดการหมวดหมู่">
+<x-admin-layout :title="__('admin/categories.title')">
     <div class="flex items-center justify-between">
-        <p class="text-sm text-gray-500">ทั้งหมด {{ $categories->total() }} หมวดหมู่</p>
+        <p class="text-sm text-gray-500">{{ __('admin/categories.total_count', ['count' => $categories->total()]) }}</p>
         <a href="{{ route('admin.categories.create') }}"
            class="flex items-center gap-2 rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-primary-600">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-            เพิ่มหมวดหมู่
+            {{ __('admin/categories.form.submit_create') }}
         </a>
     </div>
 
@@ -13,12 +13,12 @@
             <table class="w-full text-left text-sm">
                 <thead class="bg-gray-50 text-xs uppercase text-gray-400">
                     <tr>
-                        <th class="px-5 py-3 font-medium">หมวดหมู่</th>
-                        <th class="px-5 py-3 font-medium">Slug</th>
-                        <th class="px-5 py-3 font-medium">จำนวนสินค้า</th>
-                        <th class="px-5 py-3 font-medium">ลำดับ</th>
-                        <th class="px-5 py-3 font-medium">สถานะ</th>
-                        <th class="px-5 py-3 text-right font-medium">จัดการ</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/categories.table.category') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/categories.table.slug') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/categories.table.products_count') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/categories.table.sort_order') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/categories.table.status') }}</th>
+                        <th class="px-5 py-3 text-right font-medium">{{ __('admin/categories.table.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -35,23 +35,23 @@
                             <td class="px-5 py-3 text-gray-600">{{ $category->sort_order }}</td>
                             <td class="px-5 py-3">
                                 <span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $category->is_active ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-100 text-gray-500' }}">
-                                    {{ $category->is_active ? 'เปิดใช้งาน' : 'ปิดใช้งาน' }}
+                                    {{ $category->is_active ? __('admin/categories.status.active') : __('admin/categories.status.inactive') }}
                                 </span>
                             </td>
                             <td class="px-5 py-3">
                                 <div class="flex items-center justify-end gap-1.5">
                                     <a href="{{ route('admin.categories.edit', $category) }}"
-                                       class="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 transition hover:bg-blue-100">แก้ไข</a>
+                                       class="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 transition hover:bg-blue-100">{{ __('admin/categories.table.edit') }}</a>
                                     <form method="POST" action="{{ route('admin.categories.destroy', $category) }}"
-                                          onsubmit="return confirm('ลบหมวดหมู่นี้?')">
+                                          onsubmit="return confirmSubmit(event, '{{ __('admin/categories.confirm.delete') }}')">
                                         @csrf @method('DELETE')
-                                        <button type="submit" class="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-500 transition hover:bg-red-100">ลบ</button>
+                                        <button type="submit" class="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-500 transition hover:bg-red-100">{{ __('admin/categories.table.delete') }}</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="px-5 py-10 text-center text-gray-400">ยังไม่มีหมวดหมู่</td></tr>
+                        <tr><td colspan="6" class="px-5 py-10 text-center text-gray-400">{{ __('admin/categories.empty_state') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>

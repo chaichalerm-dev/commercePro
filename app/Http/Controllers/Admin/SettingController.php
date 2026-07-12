@@ -77,6 +77,6 @@ class SettingController extends Controller
 
         ActivityLog::record('settings.updated', null, ['keys' => array_keys($validated)]);
 
-        return back()->with('success', 'บันทึกการตั้งค่าเรียบร้อยแล้ว');
+        return back()->with('success', __('admin/settings.flash.updated'));
     }
 }

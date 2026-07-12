@@ -11,9 +11,6 @@ enum UserStatus: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Active => 'Active',
-            self::Banned => 'Banned',
-        };
+        return __('enums.user_status.'.$this->value);
     }
 }

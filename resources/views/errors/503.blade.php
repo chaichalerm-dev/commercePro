@@ -1,2 +1,2 @@
-<x-error-page code="503" title="ระบบอยู่ระหว่างปรับปรุง"
-               message="เรากำลังปรับปรุงระบบเพื่อประสบการณ์ที่ดียิ่งขึ้น กรุณากลับมาใหม่ในอีกสักครู่" />
+<x-error-page code="503" :title="__('errors.503.title')"
+               :message="__('errors.503.message')" />

@@ -38,7 +38,7 @@ class WishlistController extends Controller
         if ($existing !== null) {
             $existing->delete();
 
-            return back()->with('success', 'นำสินค้าออกจากรายการโปรดแล้ว');
+            return back()->with('success', __('storefront/wishlist.flash.removed'));
         }
 
         Wishlist::query()->create([
@@ -46,6 +46,6 @@ class WishlistController extends Controller
             'product_id' => $validated['product_id'],
         ]);
 
-        return back()->with('success', 'เพิ่มสินค้าในรายการโปรดแล้ว');
+        return back()->with('success', __('storefront/wishlist.flash.added'));
     }
 }

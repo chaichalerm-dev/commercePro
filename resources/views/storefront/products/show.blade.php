@@ -28,7 +28,7 @@
 
     <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
         <x-breadcrumb :items="[
-            'สินค้าทั้งหมด' => route('products.index'),
+            __('storefront/products.heading.all_products') => route('products.index'),
             $product->category->name => route('categories.show', $product->category->slug),
             $product->name => null,
         ]" />
@@ -65,7 +65,7 @@
 
                 <div class="mt-2 flex items-center gap-3 text-sm">
                     <x-star-rating :rating="$product->rating_avg ?? 0" />
-                    <span class="text-gray-500">{{ number_format((float) ($product->rating_avg ?? 0), 1) }} ({{ $product->reviews_count }} รีวิว)</span>
+                    <span class="text-gray-500">{{ number_format((float) ($product->rating_avg ?? 0), 1) }} ({{ __('storefront/products.show.reviews_count', ['count' => $product->reviews_count]) }})</span>
                     <span class="text-gray-300">|</span>
                     <span class="text-gray-400">SKU: {{ $product->sku }}</span>
                 </div>
@@ -80,7 +80,7 @@
 
                 <p class="mt-4 flex items-center gap-2 text-sm {{ $product->isInStock() ? 'text-emerald-600' : 'text-red-500' }}">
                     <span class="h-2 w-2 rounded-full {{ $product->isInStock() ? 'bg-emerald-500' : 'bg-red-500' }}"></span>
-                    {{ $product->isInStock() ? 'มีสินค้า ('.$product->stock.' ชิ้น)' : 'สินค้าหมด' }}
+                    {{ $product->isInStock() ? __('storefront/products.show.in_stock', ['count' => $product->stock]) : __('storefront/products.show.out_of_stock') }}
                 </p>
 
                 <div class="mt-6 flex flex-wrap items-start gap-3">
@@ -121,16 +121,16 @@
                                 class="flex items-center gap-2 rounded-xl bg-primary-500 px-8 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-primary-600 disabled:opacity-50"
                                 @disabled(! $product->isInStock())>
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"/></svg>
-                            เพิ่มลงตะกร้า
+                            {{ __('storefront/products.show.add_to_cart') }}
                         </button>
                     </form>
 
                     <form method="POST" action="{{ route('wishlist.toggle') }}">
                         @csrf
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
-                        <button type="submit" title="{{ auth()->check() ? 'เพิ่ม/นำออกจากรายการโปรด' : 'เข้าสู่ระบบเพื่อใช้รายการโปรด' }}"
+                        <button type="submit" title="{{ auth()->check() ? __('storefront/products.show.wishlist_toggle_auth') : __('storefront/products.show.wishlist_toggle_guest') }}"
                                 class="rounded-xl border p-2.5 transition {{ auth()->user()?->wishlists()->where('product_id', $product->id)->exists() ? 'border-red-200 bg-red-50 text-red-500' : 'border-gray-200 text-gray-400 hover:border-red-200 hover:text-red-500' }}"
-                                aria-label="รายการโปรด">
+                                aria-label="{{ __('storefront/products.show.wishlist_aria') }}">
                             <svg class="h-5 w-5" fill="{{ auth()->user()?->wishlists()->where('product_id', $product->id)->exists() ? 'currentColor' : 'none' }}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/></svg>
                         </button>
                     </form>
@@ -142,13 +142,13 @@
 
         {{-- Description --}}
         <section class="mt-12 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-8">
-            <h2 class="text-lg font-bold text-gray-900">รายละเอียดสินค้า</h2>
+            <h2 class="text-lg font-bold text-gray-900">{{ __('storefront/products.show.description_heading') }}</h2>
             <div class="prose prose-sm mt-4 max-w-none whitespace-pre-line text-gray-600">{{ $product->description }}</div>
         </section>
 
         {{-- Reviews --}}
         <section class="mt-8 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-8">
-            <h2 class="text-lg font-bold text-gray-900">รีวิวจากผู้ซื้อ ({{ $product->reviews_count }})</h2>
+            <h2 class="text-lg font-bold text-gray-900">{{ __('storefront/products.show.reviews_heading', ['count' => $product->reviews_count]) }}</h2>
             @forelse ($product->reviews as $review)
                 <article class="mt-5 border-b border-gray-100 pb-5 last:border-0 last:pb-0">
                     <div class="flex items-center gap-3">
@@ -168,14 +168,14 @@
                     @endif
                 </article>
             @empty
-                <p class="mt-4 text-sm text-gray-400">ยังไม่มีรีวิวสำหรับสินค้านี้</p>
+                <p class="mt-4 text-sm text-gray-400">{{ __('storefront/products.show.no_reviews') }}</p>
             @endforelse
         </section>
 
         {{-- Related --}}
         @if ($relatedProducts->isNotEmpty())
             <section class="mt-10">
-                <h2 class="text-xl font-bold text-gray-900">สินค้าที่คุณอาจสนใจ</h2>
+                <h2 class="text-xl font-bold text-gray-900">{{ __('storefront/products.show.related_heading') }}</h2>
                 <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
                     @foreach ($relatedProducts as $related)
                         <x-product-card :product="$related" />

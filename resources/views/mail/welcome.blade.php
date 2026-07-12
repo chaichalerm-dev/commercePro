@@ -1,20 +1,20 @@
 <x-mail::message>
-# ยินดีต้อนรับสู่ ShopSmart 🎉
+# {{ __('mail.welcome.heading') }}
 
-สวัสดีคุณ {{ $user->name }}
+{{ __('mail.welcome.greeting', ['name' => $user->name]) }}
 
-ขอบคุณที่สมัครสมาชิกกับเรา! ตอนนี้คุณสามารถ:
+{{ __('mail.welcome.intro') }}
 
-- ช้อปสินค้าคุณภาพกว่า 50 รายการ
-- เก็บสินค้าที่ถูกใจไว้ในรายการโปรด
-- ติดตามสถานะคำสั่งซื้อได้ตลอดเวลา
+- {{ __('mail.welcome.perk_shop') }}
+- {{ __('mail.welcome.perk_wishlist') }}
+- {{ __('mail.welcome.perk_track') }}
 
-ใช้โค้ด **WELCOME10** รับส่วนลด 10% สำหรับคำสั่งซื้อแรกของคุณ
+{{ __('mail.welcome.promo') }}
 
 <x-mail::button :url="route('products.index')">
-เริ่มช้อปเลย
+{{ __('mail.welcome.cta') }}
 </x-mail::button>
 
-ขอบคุณ<br>
-ทีมงาน {{ config('app.name') }}
+{{ __('mail.welcome.thanks') }}<br>
+{{ __('mail.welcome.team', ['app' => config('app.name')]) }}
 </x-mail::message>

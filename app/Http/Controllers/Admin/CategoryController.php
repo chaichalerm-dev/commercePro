@@ -39,7 +39,7 @@ class CategoryController extends Controller
         ActivityLog::record('category.created', $category, ['name' => $category->name]);
         $this->forgetNavCache();
 
-        return redirect()->route('admin.categories.index')->with('success', "เพิ่มหมวดหมู่ \"{$category->name}\" เรียบร้อยแล้ว");
+        return redirect()->route('admin.categories.index')->with('success', __('admin/categories.flash.created', ['name' => $category->name]));
     }
 
     public function edit(Category $category): View
@@ -58,7 +58,7 @@ class CategoryController extends Controller
         ActivityLog::record('category.updated', $category, ['name' => $category->name]);
         $this->forgetNavCache();
 
-        return redirect()->route('admin.categories.index')->with('success', "บันทึกหมวดหมู่ \"{$category->name}\" เรียบร้อยแล้ว");
+        return redirect()->route('admin.categories.index')->with('success', __('admin/categories.flash.updated', ['name' => $category->name]));
     }
 
     public function destroy(Category $category): RedirectResponse
@@ -66,7 +66,7 @@ class CategoryController extends Controller
         $this->authorize('delete', $category);
 
         if ($category->products()->withTrashed()->exists()) {
-            return back()->with('error', "ลบไม่ได้: หมวดหมู่ \"{$category->name}\" ยังมีสินค้าอยู่");
+            return back()->with('error', __('admin/categories.flash.delete_blocked', ['name' => $category->name]));
         }
 
         $category->delete();
@@ -74,7 +74,7 @@ class CategoryController extends Controller
         ActivityLog::record('category.deleted', $category, ['name' => $category->name]);
         $this->forgetNavCache();
 
-        return back()->with('success', "ลบหมวดหมู่ \"{$category->name}\" เรียบร้อยแล้ว");
+        return back()->with('success', __('admin/categories.flash.deleted', ['name' => $category->name]));
     }
 
     /**

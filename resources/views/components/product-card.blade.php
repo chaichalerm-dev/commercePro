@@ -9,10 +9,10 @@
             @if ($product->discount_percent)
                 <span class="rounded-md bg-red-500 px-2 py-0.5 text-xs font-bold text-white shadow">-{{ $product->discount_percent }}%</span>
             @elseif ($product->created_at->gt(now()->subDays(14)))
-                <span class="rounded-md bg-emerald-500 px-2 py-0.5 text-xs font-bold text-white shadow">ใหม่</span>
+                <span class="rounded-md bg-emerald-500 px-2 py-0.5 text-xs font-bold text-white shadow">{{ __('storefront/products.badges.new') }}</span>
             @endif
             @unless ($product->isInStock())
-                <span class="rounded-md bg-gray-700 px-2 py-0.5 text-xs font-bold text-white shadow">สินค้าหมด</span>
+                <span class="rounded-md bg-gray-700 px-2 py-0.5 text-xs font-bold text-white shadow">{{ __('storefront/products.badges.out_of_stock') }}</span>
             @endunless
         </span>
     </a>

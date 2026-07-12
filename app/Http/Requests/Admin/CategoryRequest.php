@@ -39,8 +39,8 @@ class CategoryRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => 'ชื่อหมวดหมู่',
-            'image' => 'รูปภาพ',
+            'name' => __('admin/categories.fields.name'),
+            'image' => __('admin/categories.fields.image'),
         ];
     }
 }

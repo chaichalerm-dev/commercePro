@@ -32,7 +32,7 @@ class CouponController extends Controller
 
         ActivityLog::record('coupon.created', $coupon, ['code' => $coupon->code]);
 
-        return redirect()->route('admin.coupons.index')->with('success', "สร้างคูปอง {$coupon->code} แล้ว");
+        return redirect()->route('admin.coupons.index')->with('success', __('admin/coupons.flash.created', ['code' => $coupon->code]));
     }
 
     public function edit(Coupon $coupon): View
@@ -46,7 +46,7 @@ class CouponController extends Controller
 
         ActivityLog::record('coupon.updated', $coupon, ['code' => $coupon->code]);
 
-        return redirect()->route('admin.coupons.index')->with('success', "บันทึกคูปอง {$coupon->code} แล้ว");
+        return redirect()->route('admin.coupons.index')->with('success', __('admin/coupons.flash.updated', ['code' => $coupon->code]));
     }
 
     public function destroy(Coupon $coupon): RedirectResponse
@@ -54,13 +54,13 @@ class CouponController extends Controller
         if ($coupon->orders()->exists()) {
             $coupon->update(['is_active' => false]);
 
-            return back()->with('error', "คูปอง {$coupon->code} เคยถูกใช้ในคำสั่งซื้อ จึงถูกปิดใช้งานแทนการลบ");
+            return back()->with('error', __('admin/coupons.flash.delete_blocked', ['code' => $coupon->code]));
         }
 
         $coupon->delete();
 
         ActivityLog::record('coupon.deleted', $coupon, ['code' => $coupon->code]);
 
-        return back()->with('success', "ลบคูปอง {$coupon->code} แล้ว");
+        return back()->with('success', __('admin/coupons.flash.deleted', ['code' => $coupon->code]));
     }
 }

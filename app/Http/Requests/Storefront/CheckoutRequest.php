@@ -43,12 +43,12 @@ class CheckoutRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'recipient' => 'ชื่อผู้รับ',
-            'phone' => 'เบอร์โทรศัพท์',
-            'line1' => 'ที่อยู่',
-            'district' => 'เขต/อำเภอ',
-            'province' => 'จังหวัด',
-            'postal_code' => 'รหัสไปรษณีย์',
+            'recipient' => __('storefront/checkout.fields.recipient'),
+            'phone' => __('storefront/checkout.fields.phone'),
+            'line1' => __('storefront/checkout.fields.line1'),
+            'district' => __('storefront/checkout.fields.district'),
+            'province' => __('storefront/checkout.fields.province'),
+            'postal_code' => __('storefront/checkout.fields.postal_code'),
         ];
     }
 }

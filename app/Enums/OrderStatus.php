@@ -14,13 +14,7 @@ enum OrderStatus: string
 
     public function label(): string
     {
-        return match ($this) {
-            self::Pending => 'Pending',
-            self::Processing => 'Processing',
-            self::Shipped => 'Shipped',
-            self::Delivered => 'Delivered',
-            self::Cancelled => 'Cancelled',
-        };
+        return __('enums.order_status.'.$this->value);
     }
 
     /**

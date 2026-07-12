@@ -61,13 +61,13 @@ class StoreProductRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'category_id' => 'หมวดหมู่',
-            'name' => 'ชื่อสินค้า',
-            'price' => 'ราคา',
-            'compare_at_price' => 'ราคาก่อนลด',
-            'stock' => 'จำนวนสต็อก',
-            'thumbnail' => 'รูปหลัก',
-            'images.*' => 'รูปภาพ',
+            'category_id' => __('admin/products.fields.category_id'),
+            'name' => __('admin/products.fields.name'),
+            'price' => __('admin/products.fields.price'),
+            'compare_at_price' => __('admin/products.fields.compare_at_price'),
+            'stock' => __('admin/products.fields.stock'),
+            'thumbnail' => __('admin/products.fields.thumbnail'),
+            'images.*' => __('admin/products.fields.images'),
         ];
     }
 }

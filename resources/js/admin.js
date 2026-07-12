@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const dataEl = document.getElementById('dashboard-data');
     if (!dataEl) return;
 
-    const { revenue, status } = JSON.parse(dataEl.textContent);
+    const { revenue, status, revenueLabel } = JSON.parse(dataEl.textContent);
     const baht = (value) => '฿' + Number(value).toLocaleString();
 
     const revenueCanvas = document.getElementById('revenueChart');
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data: {
                 labels: revenue.labels,
                 datasets: [{
-                    label: 'รายได้',
+                    label: revenueLabel,
                     data: revenue.values,
                     borderColor: PRIMARY,
                     backgroundColor: 'rgba(249, 115, 22, 0.08)',

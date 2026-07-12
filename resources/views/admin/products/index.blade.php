@@ -1,42 +1,42 @@
-<x-admin-layout title="จัดการสินค้า">
+<x-admin-layout :title="__('admin/products.title')">
     <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-2">
             <a href="{{ route('admin.products.index') }}"
                class="rounded-xl px-4 py-2 text-sm font-medium {{ ! $showTrash ? 'bg-primary-500 text-white shadow' : 'bg-white text-gray-600 hover:bg-gray-50' }}">
-                สินค้าทั้งหมด
+                {{ __('admin/products.tabs.all') }}
             </a>
             <a href="{{ route('admin.products.index', ['view' => 'trash']) }}"
                class="rounded-xl px-4 py-2 text-sm font-medium {{ $showTrash ? 'bg-primary-500 text-white shadow' : 'bg-white text-gray-600 hover:bg-gray-50' }}">
-                ถังขยะ @if($trashCount) <span class="ml-1 rounded-full bg-red-100 px-1.5 text-xs font-bold text-red-500">{{ $trashCount }}</span> @endif
+                {{ __('admin/products.tabs.trash') }} @if($trashCount) <span class="ml-1 rounded-full bg-red-100 px-1.5 text-xs font-bold text-red-500">{{ $trashCount }}</span> @endif
             </a>
         </div>
         <a href="{{ route('admin.products.create') }}"
            class="flex items-center gap-2 rounded-xl bg-primary-500 px-4 py-2 text-sm font-semibold text-white shadow transition hover:bg-primary-600">
             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-            เพิ่มสินค้า
+            {{ __('admin/products.form.submit_create') }}
         </a>
     </div>
 
     {{-- Filters --}}
     <form method="GET" class="mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-gray-100 bg-white p-3 shadow-sm">
         @if ($showTrash)<input type="hidden" name="view" value="trash">@endif
-        <input type="search" name="q" value="{{ request('q') }}" placeholder="ค้นหาชื่อสินค้า หรือ SKU..."
+        <input type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('admin/products.filters.search_placeholder') }}"
                class="w-56 rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
         <select name="category" class="rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
-            <option value="">ทุกหมวดหมู่</option>
+            <option value="">{{ __('admin/products.filters.all_categories') }}</option>
             @foreach ($categories as $category)
                 <option value="{{ $category->id }}" @selected(request('category') == $category->id)>{{ $category->name }}</option>
             @endforeach
         </select>
         <select name="status" class="rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
-            <option value="">ทุกสถานะ</option>
+            <option value="">{{ __('admin/products.filters.all_statuses') }}</option>
             @foreach ($statuses as $status)
                 <option value="{{ $status->value }}" @selected(request('status') === $status->value)>{{ $status->label() }}</option>
             @endforeach
         </select>
-        <button type="submit" class="rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700">กรอง</button>
+        <button type="submit" class="rounded-xl bg-gray-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-gray-700">{{ __('admin/products.filters.submit') }}</button>
         @if (request()->hasAny(['q', 'category', 'status']))
-            <a href="{{ route('admin.products.index', $showTrash ? ['view' => 'trash'] : []) }}" class="text-sm text-gray-400 hover:text-gray-600">ล้างตัวกรอง</a>
+            <a href="{{ route('admin.products.index', $showTrash ? ['view' => 'trash'] : []) }}" class="text-sm text-gray-400 hover:text-gray-600">{{ __('admin/products.filters.clear') }}</a>
         @endif
     </form>
 
@@ -46,13 +46,13 @@
             <table class="w-full text-left text-sm">
                 <thead class="bg-gray-50 text-xs uppercase text-gray-400">
                     <tr>
-                        <th class="px-5 py-3 font-medium">สินค้า</th>
-                        <th class="px-5 py-3 font-medium">หมวดหมู่</th>
-                        <th class="px-5 py-3 font-medium">ราคา</th>
-                        <th class="px-5 py-3 font-medium">สต็อก</th>
-                        <th class="px-5 py-3 font-medium">สถานะ</th>
-                        <th class="px-5 py-3 font-medium">แนะนำ</th>
-                        <th class="px-5 py-3 text-right font-medium">จัดการ</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/products.table.product') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/products.table.category') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/products.table.price') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/products.table.stock') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/products.table.status') }}</th>
+                        <th class="px-5 py-3 font-medium">{{ __('admin/products.table.featured') }}</th>
+                        <th class="px-5 py-3 text-right font-medium">{{ __('admin/products.table.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-50">
@@ -84,7 +84,7 @@
                                 @unless ($showTrash)
                                     <form method="POST" action="{{ route('admin.products.toggle-featured', $product) }}">
                                         @csrf @method('PATCH')
-                                        <button type="submit" title="สลับสินค้าแนะนำ"
+                                        <button type="submit" title="{{ __('admin/products.toggle_featured_title') }}"
                                                 class="relative inline-flex h-5 w-9 items-center rounded-full transition {{ $product->featured ? 'bg-primary-500' : 'bg-gray-200' }}">
                                             <span class="inline-block h-3.5 w-3.5 transform rounded-full bg-white shadow transition {{ $product->featured ? 'translate-x-4.5 ml-0.5' : 'translate-x-1' }}"></span>
                                         </button>
@@ -96,26 +96,26 @@
                                     @if ($showTrash)
                                         <form method="POST" action="{{ route('admin.products.restore', $product->id) }}">
                                             @csrf @method('PATCH')
-                                            <button type="submit" class="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-600 transition hover:bg-emerald-100">กู้คืน</button>
+                                            <button type="submit" class="rounded-lg bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-600 transition hover:bg-emerald-100">{{ __('admin/products.table.restore') }}</button>
                                         </form>
                                     @else
-                                        <a href="{{ route('products.show', $product->slug) }}" target="_blank" title="ดูหน้าร้าน"
+                                        <a href="{{ route('products.show', $product->slug) }}" target="_blank" title="{{ __('admin/products.view_storefront_title') }}"
                                            class="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600">
                                             <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
                                         </a>
                                         <a href="{{ route('admin.products.edit', $product) }}"
-                                           class="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 transition hover:bg-blue-100">แก้ไข</a>
+                                           class="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 transition hover:bg-blue-100">{{ __('admin/products.table.edit') }}</a>
                                         <form method="POST" action="{{ route('admin.products.destroy', $product) }}"
-                                              onsubmit="return confirm('ย้ายสินค้านี้ไปถังขยะ?')">
+                                              onsubmit="return confirmSubmit(event, '{{ __('admin/products.confirm.delete') }}')">
                                             @csrf @method('DELETE')
-                                            <button type="submit" class="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-500 transition hover:bg-red-100">ลบ</button>
+                                            <button type="submit" class="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-500 transition hover:bg-red-100">{{ __('admin/products.table.delete') }}</button>
                                         </form>
                                     @endif
                                 </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="px-5 py-10 text-center text-gray-400">{{ $showTrash ? 'ถังขยะว่างเปล่า' : 'ไม่พบสินค้า' }}</td></tr>
+                        <tr><td colspan="7" class="px-5 py-10 text-center text-gray-400">{{ __($showTrash ? 'admin/products.empty_trash' : 'admin/products.empty_state') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
