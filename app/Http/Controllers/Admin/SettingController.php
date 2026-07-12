@@ -24,6 +24,7 @@ class SettingController extends Controller
         'contact' => ['contact_email', 'contact_phone', 'contact_address'],
         'social' => ['social_facebook', 'social_instagram', 'social_line', 'social_youtube'],
         'shop' => ['free_shipping_min', 'shipping_fee', 'currency'],
+        'security' => ['show_demo_credentials'],
     ];
 
     private const FILE_KEYS = ['logo', 'favicon'];
@@ -40,6 +41,8 @@ class SettingController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
+        $request->merge(['show_demo_credentials' => $request->boolean('show_demo_credentials')]);
+
         $validated = $request->validate([
             'site_name' => ['required', 'string', 'max:100'],
             'tagline' => ['nullable', 'string', 'max:255'],
@@ -53,9 +56,15 @@ class SettingController extends Controller
             'free_shipping_min' => ['required', 'numeric', 'min:0'],
             'shipping_fee' => ['required', 'numeric', 'min:0'],
             'currency' => ['required', 'string', 'size:3'],
-            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
-            'favicon' => ['nullable', 'image', 'mimes:png,ico,svg', 'max:512'],
+            // No bare "image" rule here: Laravel's image rule only recognizes
+            // jpg/jpeg/png/gif/bmp/webp and never ico, so it silently rejected
+            // svg/ico uploads even though mimes explicitly allowed them.
+            'logo' => ['nullable', 'mimes:jpg,jpeg,png,webp,svg', 'max:2048'],
+            'favicon' => ['nullable', 'mimes:png,ico,svg', 'max:512'],
+            'show_demo_credentials' => ['boolean'],
         ]);
+
+        $validated['show_demo_credentials'] = $validated['show_demo_credentials'] ? '1' : '0';
 
         foreach (self::GROUPS as $group => $keys) {
             foreach ($keys as $key) {

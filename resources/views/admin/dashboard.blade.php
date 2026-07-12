@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <script type="application/json" id="dashboard-data">
+    <script type="application/json" id="dashboard-data" nonce="{{ $cspNonce }}">
         {!! json_encode(['revenue' => $revenueChart, 'status' => $ordersByStatus, 'revenueLabel' => __('admin/dashboard.cards.revenue')], JSON_UNESCAPED_UNICODE) !!}
     </script>
 

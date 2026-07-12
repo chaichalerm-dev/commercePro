@@ -7,6 +7,6 @@
         __('common.password_strength.very_strong'),
     ];
 @endphp
-<script>
+<script nonce="{{ $cspNonce }}">
     window.passwordStrengthLabels = @json($passwordStrengthLabels);
 </script>

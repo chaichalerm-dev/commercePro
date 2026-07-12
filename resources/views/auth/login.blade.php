@@ -75,8 +75,10 @@
             {{ __('auth_pages.login.register_cta') }}
         </a>
 
-        <p class="mt-5 rounded-xl bg-gray-50 p-3 text-center text-xs leading-relaxed text-gray-500">
-            {!! __('auth_pages.login.demo_accounts') !!}
-        </p>
+        @if ((\App\Models\Setting::get('show_demo_credentials', '1')) === '1')
+            <p class="mt-5 rounded-xl bg-gray-50 p-3 text-center text-xs leading-relaxed text-gray-500">
+                {!! __('auth_pages.login.demo_accounts') !!}
+            </p>
+        @endif
     </div>
 </x-guest-layout>

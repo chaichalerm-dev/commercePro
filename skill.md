@@ -1,0 +1,55 @@
+# skill.md — AI assistant orientation for ShopSmart
+
+Read this before making changes. It captures conventions, gotchas, and decisions that aren't obvious from the code alone. `docs/ARCHITECTURE.md`, `docs/DATABASE.md`, and `docs/DEPLOYMENT.md` cover structure and deployment in more depth — this file is the "things that will bite you" reference.
+
+## What this is
+
+ShopSmart is a portfolio e-commerce app: Laravel 12 + PHP 8.4, PostgreSQL via Supabase (remote, always — there is no local DB), Blade + Tailwind + Alpine.js (no JS framework, no UI kit), Vite for assets. Single Breeze auth guard shared by a 4-tier role system (`App\Enums\UserRole`: Owner → Admin → Staff → User), gated by `role_id->can($ability)` and Laravel Gates defined in `AppServiceProvider::configureAdminGates()`.
+
+## Local toolchain (this machine)
+
+- PHP 8.4 lives at `C:\php84` — **not** XAMPP's bundled PHP. Always invoke it explicitly: `C:/php84/php.exe artisan ...`.
+- Composer: `C:/php84/composer.bat` (not a bare `composer` on PATH).
+- Dev server: `php artisan serve` (via `composer run dev`, which also starts the queue listener, `pail` logs, and `vite`).
+- The database is Supabase Postgres — there is no local Postgres. Tests use SQLite in-memory (`phpunit.xml`), completely separate from the dev DB.
+
+## Workflow conventions (established through this project's sessions)
+
+- **Never commit unless explicitly asked.** The user says "อัพ git" (or similar) when ready; work accumulates uncommitted between requests otherwise.
+- **Verify, don't assume.** Every claim of "fixed" or "working" in this project's history was backed by an actual test: `composer quality` (Pint + PHPStan + PHPUnit), and for UI/display bugs, an actual browser check (`mcp__claude-in-chrome__*` tools) — screenshot and/or network-request inspection, not just "the code looks right." Several real bugs in this codebase were only caught this way (see Known gotchas below).
+- **Root-cause over patching symptoms.** E.g. a missing-nonce test failure led to discovering a genuine Laravel routing gap (see below) rather than being silenced with a null-coalesce.
+- Baseline test state is **94 passed / 5 failed** — the 5 failures are pre-existing and unrelated to whatever you're working on (login-portal/cart-merge edge cases). If you see exactly this count after a change, you haven't regressed anything.
+
+## Known gotchas (found the hard way — don't rediscover these)
+
+1. **Uploaded images (logo/favicon/banners/products/categories) require the browsing host to match the request Laravel sees.** `config/filesystems.php`'s `public` disk `url` is deliberately `/storage` (root-relative), not `env('APP_URL').'/storage'` (the Laravel default). An absolute URL baked from `APP_URL` breaks the moment someone browses via a different host/port than that config (e.g. `127.0.0.1:8000` vs `localhost:8000`) — the browser then treats the image as cross-origin, and on Windows this also **doubles** concurrent connections against `php artisan serve`'s single-threaded dev server (see #2), which starts rejecting requests with real `503` responses. Places that need an *absolute* URL regardless (Open Graph meta tags, Schema.org JSON-LD `image`) wrap the relative path with the `url()` helper, which derives an absolute URL from the *current request*, not from `APP_URL`.
+2. **`php artisan serve` is effectively single-threaded on Windows.** `.env` sets `PHP_CLI_SERVER_WORKERS=4`, which is a real PHP built-in-server feature — but it's implemented via `pcntl_fork()`, which doesn't exist on Windows, so the setting silently does nothing there. A page firing many concurrent requests (product images, banners, fonts) can outrun it; PHP's dev server responds with genuine `503 Service Unavailable` to connections it can't service, not a timeout. This is a dev-only limitation — the production `Dockerfile` runs Apache, which doesn't have this problem.
+3. **Laravel's bare `image` validation rule doesn't accept `.ico` at all, and only accepts `.svg` with `image:allow_svg`.** Logo/favicon uploads must validate with `mimes:png,ico,svg` etc. *without* also stacking a plain `image` rule, or valid `.ico`/`.svg` uploads get silently rejected.
+4. **A request matching no registered route bypasses custom middleware appended to the `web` group entirely.** Laravel renders unmatched-route 404s through a separate, more minimal exception-handling pipeline — `SetLocale`, `SecureHeaders` (CSP nonce, security headers), etc. never run. Fixed with an explicit `Route::fallback(fn () => abort(404))` in `routes/web.php`, which makes unmatched paths a *real* matched route that flows through the full middleware stack. If you add more appended `web`-group middleware in the future and it seems to not apply to 404 pages, this is why.
+5. **CSP `img-src` must allow `https://*.picsum.photos`, not just `https://picsum.photos`.** All seed/demo images are picsum URLs, and picsum 302-redirects to `fastly.picsum.photos` for the actual bytes — CSP enforces against the final redirect target, not the originally-requested URL.
+6. **Alpine.js requires `'unsafe-eval'` in CSP `script-src`.** It evaluates directive expressions via `new Function()` internally. This is a deliberate, accepted tradeoff (Alpine's CSP-safe build drops directive features the app relies on), not an oversight — don't try to remove it without first confirming Alpine still works everywhere.
+7. **`View::share()` for the CSP nonce must happen *before* `$next($request)`** in `SecureHeaders` middleware, or the nonce won't be available during view rendering.
+8. **Compiling PHP's `mbstring` extension from source (as the Docker build does) needs `libonig-dev`** (oniguruma) at the apt level — not obvious from the extension name.
+9. **`php artisan sail:install` has side effects beyond creating `compose.yaml`.** It silently overwrote `.env`'s real `DB_PASSWORD` with the literal placeholder `password`, and regressed `phpunit.xml`'s test DB config from SQLite in-memory to a Postgres `testing` database. Both were reverted. If Sail tooling gets touched again, diff `.env` and `phpunit.xml` afterward before trusting the "success" message.
+10. **Sail's generated `compose.yaml` defaulted to a PHP 8.5 runtime**, mismatching this project's `^8.4` requirement — corrected manually to reference `runtimes/8.4` / `sail-8.4/app`.
+11. **A `backdrop-blur`/`backdrop-filter` (or `filter`, `transform`, `will-change: transform`) ancestor traps `position: fixed` descendants inside its own box instead of the viewport.** The storefront header (`partials/storefront/header.blade.php`) has `backdrop-blur` for its frosted-glass look. An off-canvas mobile nav `<aside class="fixed inset-y-0 ...">` originally nested inside that `<header>` collapsed to the header's own ~64px height instead of covering the full screen — because the blurred ancestor became the fixed element's containing block. Fixed by moving the `<aside>` and its backdrop to be siblings of `<header>` (with `x-data="{ mobileOpen: false }"` moved up to `<body>` in `storefront-layout.blade.php` so both still share the Alpine scope), matching how the admin sidebar is already structured (its `<aside>` is a body-level sibling of the topbar `<header>`, never nested inside it).
+12. **`npm run dev` (Vite dev server) usually isn't running in this environment — only `php artisan serve` is.** `@vite(...)` then falls back to the last `npm run build` output in `public/build`. If you add a *new* Tailwind utility combination to a Blade file (e.g. a `md:flex` that wasn't used anywhere else yet) and don't rebuild, the class silently doesn't exist in the compiled CSS — no error, the element just renders with whatever base classes still apply (looks like a logic bug, e.g. "this responsive class does nothing"). Always run `npm run build` after editing Blade/CSS and before judging whether a style change worked; check `ls -la public/build/assets/*.css` vs. the template's mtime if something looks unstyled.
+
+## Key files to know
+
+- `app/Models/Setting.php` — generic key-value settings store (`Setting::get()`, `::set()`, cached via `Cache::rememberForever`), plus `Setting::url(string $key)` which resolves a stored path to a usable URL (mirrors `App\Traits\ResolvesImageUrl`, but static/standalone for use outside a model).
+- `app/Traits/ResolvesImageUrl.php` — used by `Product`, `ProductImage`, `Category`, `Banner` to turn a stored path or passthrough absolute URL into something an `<img>` tag can use.
+- `app/Http/Middleware/SecureHeaders.php` — CSP (with per-request nonce), HSTS, and the rest of the security header set. Any new inline `<script>` needs `nonce="{{ $cspNonce }}"`; any new inline `style=""` should become a class instead (there are currently zero inline styles in the app, which is why `style-src` doesn't need `'unsafe-inline'` — keep it that way).
+- `routes/web.php` — has the `Route::fallback()` explained in gotcha #4; don't remove it.
+- `App\Enums\UserRole` — the whole admin permission model. `role_id = 1` is Owner (not renumbered despite not being "first" conceptually, to avoid reinterpreting existing seeded rows) and `role_id = 2` is User; both are pinned for that reason. `->can(string $ability)` is the single source of truth for what each tier may do.
+- `Dockerfile` / `docker/` — production container (see `docs/DEPLOYMENT.md#docker`). `compose.yaml` is Sail, local-dev-only, unrelated to the production image.
+
+## Demo accounts
+
+All password `password`: `admin@example.com` (Owner), `manager@example.com` (Admin), `staff@example.com` (Staff), `user@example.com` (User). The login page's "here are the demo accounts" hint can be hidden per-deployment via **Admin → Settings → show/hide demo credentials**.
+
+## Before calling something done
+
+1. `C:/php84/composer.bat format` (Pint) and `C:/php84/composer.bat analyse` (PHPStan level 6) — both must be clean.
+2. `C:/php84/php.exe artisan test` — expect 94 passed / 5 pre-existing failures; anything else is a regression to investigate.
+3. For anything touching a view, layout, or asset pipeline: actually load it in a browser and check the network tab / console, not just the rendered HTML from `curl`. Several bugs in this project's history (broken images, CSP violations, missing security headers on 404s) were invisible to a plain HTTP status check and only surfaced visually or in `read_network_requests`.

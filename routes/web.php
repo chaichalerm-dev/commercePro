@@ -87,3 +87,15 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+/*
+|--------------------------------------------------------------------------
+| Fallback
+|--------------------------------------------------------------------------
+| Without a matched route, Laravel renders 404s through a bare exception
+| path that skips the custom middleware appended to the "web" group (no
+| SetLocale, no SecureHeaders) — a real route makes unmatched URLs go
+| through the same middleware as everything else.
+*/
+
+Route::fallback(fn () => abort(404));

@@ -9,6 +9,7 @@ return [
         'contact' => 'Contact information',
         'social' => 'Social media',
         'shop' => 'Sales & shipping',
+        'security' => 'Login page',
     ],
 
     'fields' => [
@@ -26,9 +27,14 @@ return [
         'currency' => 'Currency',
         'logo' => 'Logo',
         'favicon' => 'Favicon',
+        'show_demo_credentials' => 'Show demo passwords on the login page',
     ],
 
+    'show_demo_credentials_hint' => 'For demo/portfolio sites. Turn off if visitors shouldn\'t see the sample account passwords.',
+
     'logo_section_title' => 'Logo & icons',
+    'currently_using' => 'Currently in use',
+    'not_set' => 'Not set',
     'submit_button' => 'Save settings',
 
     'flash' => [

@@ -2,13 +2,13 @@
                      :description="str($product->description)->limit(150)->toString()"
                      :image="$product->thumbnail_url">
     <x-slot name="head">
-        <script type="application/ld+json">
+        <script type="application/ld+json" nonce="{{ $cspNonce }}">
         {!! json_encode([
             '@context' => 'https://schema.org',
             '@type' => 'Product',
             'name' => $product->name,
             'sku' => $product->sku,
-            'image' => $product->thumbnail_url,
+            'image' => url($product->thumbnail_url),
             'description' => str($product->description)->limit(300)->toString(),
             'offers' => [
                 '@type' => 'Offer',

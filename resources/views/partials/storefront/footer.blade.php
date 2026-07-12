@@ -25,8 +25,13 @@
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8">
         <div class="grid gap-8 lg:grid-cols-5 lg:gap-10">
             <div class="text-center lg:col-span-2 lg:text-left">
-                <p class="text-2xl font-bold tracking-tight">
-                    <span class="text-white">SHOP</span><span class="text-primary-500">SMART</span>
+                <p class="flex items-center justify-center gap-2 lg:justify-start">
+                    @if ($logoUrl = \App\Models\Setting::url('logo'))
+                        <img src="{{ $logoUrl }}" alt="{{ $siteName }}" class="h-9 w-auto">
+                        <span class="text-2xl font-bold tracking-tight text-white">{{ $siteName }}</span>
+                    @else
+                        <span class="text-2xl font-bold tracking-tight"><span class="text-white">SHOP</span><span class="text-primary-500">SMART</span></span>
+                    @endif
                 </p>
                 <p class="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-gray-400 lg:mx-0">{{ $siteTagline }}</p>
                 <div class="mt-5 flex justify-center gap-3 lg:justify-start">

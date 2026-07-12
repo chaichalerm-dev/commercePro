@@ -41,7 +41,13 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            // Root-relative on purpose (no scheme/host): an absolute URL built from
+            // APP_URL breaks whenever the app is actually browsed via a different
+            // host/port than APP_URL configures (e.g. 127.0.0.1 vs localhost during
+            // local dev) — the browser then treats uploaded-image requests as a
+            // second origin, which both 404s on host mismatches and doubles the
+            // concurrent-connection load PHP's single-threaded dev server sees.
+            'url' => '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

@@ -34,6 +34,9 @@ return [
     ],
 
     'mobile_menu_aria' => 'Menu',
+    'close_menu_aria' => 'Close menu',
+    'menu_heading' => 'Main Menu',
+    'language_label' => 'Language',
     'categories_heading' => 'Shop by Category',
 
     'nav_items' => [

@@ -34,6 +34,9 @@ class SettingSeeder extends Seeder
                 'shipping_fee' => '50',
                 'currency' => 'THB',
             ],
+            'security' => [
+                'show_demo_credentials' => '1',
+            ],
         ];
 
         foreach ($settings as $group => $pairs) {

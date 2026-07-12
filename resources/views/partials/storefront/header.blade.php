@@ -12,15 +12,28 @@
     </div>
 </div>
 
-<header class="sticky top-0 z-40 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur"
-        x-data="{ mobileOpen: false }">
+<header class="sticky top-0 z-40 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur">
     {{-- Main header row --}}
-    <div class="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:gap-8 lg:px-8">
-        <a href="{{ route('home') }}" class="shrink-0 text-2xl font-bold tracking-tight">
-            <span class="text-gray-900">SHOP</span><span class="text-primary-500">SMART</span>
+    <div class="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 sm:px-6 lg:gap-8 lg:px-8">
+        {{-- Mobile menu toggle (left, mobile only — everything else lives in the drawer) --}}
+        <button @click="mobileOpen = !mobileOpen" class="-ml-2 shrink-0 rounded-full p-2 text-gray-700 hover:bg-gray-100 md:hidden" aria-label="{{ __('nav.mobile_menu_aria') }}">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+        </button>
+
+        {{-- Site name (text) centered on mobile — the logo image is desktop-only, left-aligned there --}}
+        <a href="{{ route('home') }}" class="flex flex-1 items-center justify-center md:flex-none md:shrink-0 md:justify-start">
+            <span class="truncate text-xl font-bold tracking-tight text-gray-900 md:hidden">{{ $siteName }}</span>
+
+            <span class="hidden md:block">
+                @if ($logoUrl = \App\Models\Setting::url('logo'))
+                    <img src="{{ $logoUrl }}" alt="{{ $siteName }}" class="h-9 w-auto">
+                @else
+                    <span class="text-2xl font-bold tracking-tight"><span class="text-gray-900">SHOP</span><span class="text-primary-500">SMART</span></span>
+                @endif
+            </span>
         </a>
 
-        {{-- Search --}}
+        {{-- Search: desktop only, moved into the mobile drawer below --}}
         <form action="{{ route('products.index') }}" method="GET" class="hidden flex-1 md:block">
             <div class="flex overflow-hidden rounded-full border border-gray-200 bg-gray-50 focus-within:border-primary-400 focus-within:ring-1 focus-within:ring-primary-400">
                 <input type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('nav.search.placeholder') }}"
@@ -38,11 +51,12 @@
             </div>
         </form>
 
-        {{-- Account + cart --}}
-        <div class="ml-auto flex shrink-0 items-center gap-2 md:ml-0">
-            <x-language-switcher />
+        {{-- Cart is always reachable; language switcher + account menu move into the mobile drawer below --}}
+        <div class="flex shrink-0 items-center gap-2">
+            <div class="hidden items-center gap-2 md:flex">
+                <x-language-switcher />
 
-            @auth
+                @auth
                 <div class="relative" x-data="{ open: false }" @click.outside="open = false">
                     <button @click="open = !open" class="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
@@ -110,6 +124,7 @@
                     <span class="hidden lg:block">{{ __('nav.account.login') }}</span>
                 </a>
             @endauth
+            </div>
 
             <a href="{{ route('cart.index') }}" title="{{ __('nav.cart_link.title') }}"
                x-init="$store.cartDrawer.count = {{ $cartCount }}"
@@ -119,11 +134,6 @@
                 <span class="hidden lg:block">{{ __('nav.cart_link.label') }}</span>
                 <span class="absolute -right-0.5 -top-0.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-primary-500 px-1 text-[11px] font-bold text-white" x-text="$store.cartDrawer.count">{{ $cartCount }}</span>
             </a>
-
-            {{-- Mobile menu toggle --}}
-            <button @click="mobileOpen = !mobileOpen" class="rounded-full p-2 text-gray-700 hover:bg-gray-100 md:hidden" aria-label="{{ __('nav.mobile_menu_aria') }}">
-                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
-            </button>
         </div>
     </div>
 
@@ -151,24 +161,83 @@
         </div>
     </nav>
 
-    {{-- Mobile menu --}}
-    <div x-show="mobileOpen" x-transition x-cloak class="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-gray-100 bg-white md:hidden">
-        <form action="{{ route('products.index') }}" method="GET" class="p-4 pb-2">
+</header>
+
+{{-- Mobile menu: off-canvas panel sliding in from the left (same pattern as the admin sidebar).
+     Deliberately a sibling of <header>, not nested inside it — the header's `backdrop-blur`
+     establishes a containing block for fixed-position descendants, which would trap this
+     panel inside the header's own (short) box instead of the full viewport height. --}}
+<aside class="fixed inset-y-0 left-0 z-50 flex w-80 max-w-[85vw] -translate-x-full flex-col bg-white shadow-xl transition-transform duration-300 md:hidden"
+       :class="mobileOpen && '!translate-x-0'">
+    <div class="flex h-16 shrink-0 items-center justify-between border-b border-gray-100 px-4">
+        <span class="text-xl font-bold tracking-tight text-gray-900">{{ $siteName }}</span>
+        <button @click="mobileOpen = false" class="-mr-2 rounded-full p-2 text-gray-500 hover:bg-gray-100" aria-label="{{ __('nav.close_menu_aria') }}">
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+    </div>
+
+    <div class="min-h-0 flex-1 overflow-y-auto">
+        {{-- Account --}}
+        <div class="p-4">
+            @auth
+                <div class="flex items-center gap-3 rounded-xl bg-gray-50 p-3">
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-600">
+                        {{ mb_substr(auth()->user()->name, 0, 1) }}
+                    </span>
+                    <div class="min-w-0 flex-1">
+                        <p class="truncate text-sm font-semibold text-gray-900">{{ auth()->user()->name }}</p>
+                        <p class="truncate text-xs text-gray-500">{{ auth()->user()->email }}</p>
+                    </div>
+                </div>
+
+                <div class="mt-2 grid grid-cols-2 gap-2">
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="col-span-2 flex items-center justify-center gap-2 rounded-lg bg-gray-900 px-3 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800">
+                            {{ __('nav.account.admin') }}
+                        </a>
+                    @endif
+                    <a href="{{ route('dashboard') }}" class="truncate rounded-lg border border-gray-200 px-3 py-2.5 text-center text-sm text-gray-700 transition hover:bg-gray-50">{{ __('nav.account.my_account') }}</a>
+                    <a href="{{ route('profile.edit') }}" class="truncate rounded-lg border border-gray-200 px-3 py-2.5 text-center text-sm text-gray-700 transition hover:bg-gray-50">{{ __('nav.account.edit_profile') }}</a>
+                    <a href="{{ route('orders.index') }}" class="truncate rounded-lg border border-gray-200 px-3 py-2.5 text-center text-sm text-gray-700 transition hover:bg-gray-50">{{ __('nav.account.my_orders') }}</a>
+                    <a href="{{ route('wishlist.index') }}" class="truncate rounded-lg border border-gray-200 px-3 py-2.5 text-center text-sm text-gray-700 transition hover:bg-gray-50">{{ __('nav.account.wishlist') }}</a>
+                </div>
+
+                <form method="POST" action="{{ route('logout') }}" onsubmit="return confirmSubmit(event, '{{ __('nav.account.logout_confirm') }}')" class="mt-2">
+                    @csrf
+                    <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-lg bg-red-50 px-3 py-2.5 text-sm font-medium text-red-600 transition hover:bg-red-100">
+                        {{ __('nav.account.logout') }}
+                    </button>
+                </form>
+            @else
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="{{ route('login') }}" class="flex items-center justify-center rounded-lg bg-primary-500 px-3 py-2.5 text-sm font-medium text-white transition hover:bg-primary-600">{{ __('nav.account.login') }}</a>
+                    <a href="{{ route('register') }}" class="flex items-center justify-center rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-gray-700 transition hover:bg-gray-50">{{ __('auth_pages.login.register_cta') }}</a>
+                </div>
+            @endauth
+        </div>
+
+        {{-- Search --}}
+        <form action="{{ route('products.index') }}" method="GET" class="border-t border-gray-100 p-4">
             <input type="search" name="q" value="{{ request('q') }}" placeholder="{{ __('nav.search.placeholder') }}"
                    class="w-full rounded-full border-gray-200 bg-gray-50 px-5 py-2.5 text-sm focus:border-primary-400 focus:ring-primary-400">
         </form>
 
-        <nav class="grid grid-cols-2 gap-2 p-4 pt-2">
-            @foreach ($navItems as $item)
-                <a href="{{ $item['url'] }}"
-                   class="truncate rounded-lg px-3 py-2.5 text-center text-sm font-medium transition {{ $item['active'] ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50' }}">
-                    {{ $item['label'] }}
-                </a>
-            @endforeach
-        </nav>
+        {{-- Main menu --}}
+        <div class="border-t border-gray-100 p-4">
+            <p class="px-1 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">{{ __('nav.menu_heading') }}</p>
+            <nav class="grid grid-cols-2 gap-2">
+                @foreach ($navItems as $item)
+                    <a href="{{ $item['url'] }}"
+                       class="truncate rounded-lg px-3 py-2.5 text-center text-sm font-medium transition {{ $item['active'] ? 'bg-primary-50 text-primary-600' : 'text-gray-700 hover:bg-gray-50' }}">
+                        {{ $item['label'] }}
+                    </a>
+                @endforeach
+            </nav>
+        </div>
 
+        {{-- Categories --}}
         @if ($navCategories->isNotEmpty())
-            <div class="border-t border-gray-100 p-4 pt-3">
+            <div class="border-t border-gray-100 p-4">
                 <p class="px-1 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">{{ __('nav.categories_heading') }}</p>
                 <div class="grid grid-cols-2 gap-2">
                     @foreach ($navCategories as $navCategory)
@@ -180,5 +249,14 @@
                 </div>
             </div>
         @endif
+
+        {{-- Language --}}
+        <div class="flex items-center justify-between border-t border-gray-100 p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">{{ __('nav.language_label') }}</p>
+            <x-language-switcher align="left" />
+        </div>
     </div>
-</header>
+</aside>
+
+{{-- Backdrop --}}
+<div x-show="mobileOpen" x-cloak @click="mobileOpen = false" class="fixed inset-0 z-40 bg-black/40 md:hidden"></div>

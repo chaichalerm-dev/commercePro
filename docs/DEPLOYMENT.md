@@ -65,6 +65,22 @@ Plus one cron entry for the scheduler:
 * * * * * php /path/to/artisan schedule:run >> /dev/null 2>&1
 ```
 
+## Docker
+
+A production `Dockerfile` is included (multi-stage: Node/Vite build → `php:8.4-apache` runtime, with Supervisor running Apache and a `queue:work` process side by side). It's a better fit for platforms that deploy from a container image (Railway, Render, Fly.io, a VPS) than the raw `php artisan serve` recipe above, since Apache handles real concurrent connections — `php artisan serve` is single-threaded on Windows dev machines and not meant for production regardless of OS.
+
+```bash
+docker build -t shopsmart:prod .
+docker run -d -p 8080:80 --env-file .env -e RUN_MIGRATIONS=true shopsmart:prod
+```
+
+Key points:
+
+- The entrypoint (`docker/entrypoint.sh`) rewrites Apache's listen port from `$PORT` (Railway/Render inject this), runs `config:cache`/`route:cache`/`view:cache`/`storage:link` at container start (not build time, since these depend on runtime env), and only runs migrations if `RUN_MIGRATIONS=true` is set — left off by default so a redeploy never runs migrations unattended.
+- `.env` is never baked into the image (`.dockerignore` excludes it) — inject real env vars via the platform's secret/variable manager, or `--env-file .env` for local testing.
+- The queue worker runs inside the same container via Supervisor (`docker/supervisor/supervisord.conf`), so no second service is required for queued mail like order confirmations.
+- `compose.yaml` (Laravel Sail) is a **separate, local-dev-only** setup — it is not meant for production and is not what the `Dockerfile` above uses.
+
 ## Railway
 
 1. **New Project → Deploy from GitHub repo** — Railway's Nixpacks detects Laravel automatically.

@@ -11,6 +11,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="icon" href="{{ \App\Models\Setting::url('favicon') ?? asset('favicon.ico') }}">
 
     {{-- SEO --}}
     <title>{{ $title ? "{$title} | {$siteName}" : "{$siteName} — {$siteTagline}" }}</title>
@@ -23,11 +24,11 @@
     <meta property="og:title" content="{{ $title ?? $siteName }}">
     <meta property="og:description" content="{{ $description ?? $siteTagline }}">
     <meta property="og:url" content="{{ url()->current() }}">
-    <meta property="og:image" content="{{ $image ?? asset('images/placeholder.svg') }}">
+    <meta property="og:image" content="{{ $image ? url($image) : asset('images/placeholder.svg') }}">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $title ?? $siteName }}">
     <meta name="twitter:description" content="{{ $description ?? $siteTagline }}">
-    <meta name="twitter:image" content="{{ $image ?? asset('images/placeholder.svg') }}">
+    <meta name="twitter:image" content="{{ $image ? url($image) : asset('images/placeholder.svg') }}">
 
     {{-- Fonts --}}
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -38,7 +39,7 @@
 
     {{ $head ?? '' }}
 </head>
-<body class="min-h-screen bg-gray-50 font-sans text-gray-800 antialiased">
+<body class="min-h-screen bg-gray-50 font-sans text-gray-800 antialiased" x-data="{ mobileOpen: false }">
     @include('partials.storefront.header')
 
     {{-- Flash toast --}}

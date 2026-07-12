@@ -6,6 +6,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Setting extends Model
 {
@@ -25,6 +27,21 @@ class Setting extends Model
             self::cacheKey($key),
             fn (): ?string => self::query()->where('key', $key)->value('value'),
         ) ?? $default;
+    }
+
+    /**
+     * Resolve a file-valued setting (logo, favicon) to a browser-usable URL.
+     * Returns null when unset, so callers can fall back to a bundled default.
+     */
+    public static function url(string $key): ?string
+    {
+        $value = self::get($key);
+
+        if (blank($value)) {
+            return null;
+        }
+
+        return Str::startsWith($value, ['http://', 'https://']) ? $value : Storage::disk('public')->url($value);
     }
 
     public static function set(string $key, ?string $value, string $group = 'general'): void
