@@ -31,6 +31,11 @@ return [
         'badge' => 'Coming soon',
     ],
 
+    'sidebar' => [
+        'collapse' => 'Collapse menu',
+        'expand' => 'Expand menu',
+    ],
+
     'topbar' => [
         'open_menu' => 'Open menu',
         'view_storefront' => 'View storefront',

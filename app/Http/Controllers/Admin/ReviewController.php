@@ -30,16 +30,18 @@ class ReviewController extends Controller
     {
         $review->update(['is_approved' => ! $review->is_approved]);
 
-        ActivityLog::record('review.moderated', $review, ['approved' => $review->is_approved]);
+        ActivityLog::record('review.moderated', $review, ['approved' => $review->is_approved, 'product' => $review->product->name]);
 
         return back()->with('success', $review->is_approved ? __('admin/reviews.flash.approved') : __('admin/reviews.flash.hidden'));
     }
 
     public function destroy(Review $review): RedirectResponse
     {
+        $product = $review->product->name;
+
         $review->delete();
 
-        ActivityLog::record('review.deleted', $review, ['product_id' => $review->product_id]);
+        ActivityLog::record('review.deleted', $review, ['product' => $product]);
 
         return back()->with('success', __('admin/reviews.flash.deleted'));
     }

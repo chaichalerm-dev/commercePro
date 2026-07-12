@@ -69,7 +69,7 @@
         <aside class="h-fit space-y-4">
             <section class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
                 <h2 class="font-semibold text-gray-900">{{ __('admin/orders.show.status_title') }}</h2>
-                <p class="mt-3"><span class="rounded-full px-3 py-1.5 text-sm font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span></p>
+                <p class="mt-3"><span class="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span></p>
 
                 @if ($order->status->transitions() !== [])
                     <form method="POST" action="{{ route('admin.orders.status', $order) }}" class="mt-4">
@@ -91,7 +91,7 @@
 
             <section class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
                 <h2 class="font-semibold text-gray-900">{{ __('admin/orders.show.payment_title') }}</h2>
-                <p class="mt-3"><span class="rounded-full px-3 py-1.5 text-sm font-medium {{ $order->payment_status->color() }}">{{ $order->payment_status->label() }}</span></p>
+                <p class="mt-3"><span class="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium {{ $order->payment_status->color() }}">{{ $order->payment_status->label() }}</span></p>
                 <form method="POST" action="{{ route('admin.orders.payment', $order) }}" class="mt-4">
                     @csrf @method('PATCH')
                     <select name="payment_status" class="w-full rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">

@@ -4,12 +4,17 @@ return [
 
     'fields' => [
         'category_id' => 'Category',
+        'sku' => 'SKU',
+        'slug' => 'Slug',
         'name' => 'Product name',
+        'description' => 'Description',
         'price' => 'Price',
         'compare_at_price' => 'Compare-at price',
         'stock' => 'Stock',
         'thumbnail' => 'Main image',
         'images' => 'Images',
+        'status' => 'Status',
+        'featured' => 'Featured',
     ],
 
     'title' => 'Manage Products',

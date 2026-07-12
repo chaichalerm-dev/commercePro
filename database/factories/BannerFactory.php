@@ -18,6 +18,7 @@ class BannerFactory extends Factory
         return [
             'title' => ucwords(fake()->words(3, true)),
             'subtitle' => fake()->sentence(),
+            'show_title' => true,
             'image' => 'https://picsum.photos/seed/'.fake()->unique()->uuid().'/1600/600',
             'link' => '/products',
             'position' => BannerPosition::Hero,

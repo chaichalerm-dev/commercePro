@@ -18,8 +18,8 @@
                             <p class="font-semibold text-primary-600">{{ $order->order_number }}</p>
                             <p class="mt-0.5 text-xs text-gray-400">{{ $order->created_at->format('d/m/Y H:i') }} · {{ __('storefront/orders.index.items_count', ['count' => $order->items_count]) }}</p>
                         </div>
-                        <span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span>
-                        <span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $order->payment_status->color() }}">{{ $order->payment_status->label() }}</span>
+                        <span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span>
+                        <span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium {{ $order->payment_status->color() }}">{{ $order->payment_status->label() }}</span>
                         <span class="text-base font-bold text-gray-900">{{ money((float) $order->grand_total) }}</span>
                     </a>
                 @endforeach

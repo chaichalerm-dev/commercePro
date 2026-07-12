@@ -72,7 +72,8 @@ class AdminAccessTest extends TestCase
     public function test_registration_assigns_the_user_role(): void
     {
         $this->post('/register', [
-            'name' => 'New Customer',
+            'first_name' => 'New',
+            'last_name' => 'Customer',
             'email' => 'new@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',

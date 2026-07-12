@@ -72,7 +72,7 @@ class ProductController extends Controller
 
         return redirect()
             ->route('admin.products.index')
-            ->with('success', "à¹€à¸žà¸´à¹ˆà¸¡à¸ªà¸´à¸™à¸„à¹‰à¸² \"{$product->name}\" à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢à¹à¸¥à¹‰à¸§");
+            ->with('success', __('admin/products.flash.created', ['name' => $product->name]));
     }
 
     public function edit(Product $product): View
@@ -101,7 +101,7 @@ class ProductController extends Controller
 
         return redirect()
             ->route('admin.products.index')
-            ->with('success', "à¸šà¸±à¸™à¸—à¸¶à¸à¸ªà¸´à¸™à¸„à¹‰à¸² \"{$product->name}\" à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢à¹à¸¥à¹‰à¸§");
+            ->with('success', __('admin/products.flash.updated', ['name' => $product->name]));
     }
 
     public function destroy(Product $product): RedirectResponse
@@ -110,7 +110,7 @@ class ProductController extends Controller
 
         $this->service->delete($product);
 
-        return back()->with('success', "à¸¢à¹‰à¸²à¸¢à¸ªà¸´à¸™à¸„à¹‰à¸² \"{$product->name}\" à¹„à¸›à¸–à¸±à¸‡à¸‚à¸¢à¸°à¹à¸¥à¹‰à¸§");
+        return back()->with('success', __('admin/products.flash.deleted', ['name' => $product->name]));
     }
 
     public function restore(Product $product): RedirectResponse
@@ -119,7 +119,7 @@ class ProductController extends Controller
 
         $this->service->restore($product);
 
-        return back()->with('success', "à¸à¸¹à¹‰à¸„à¸·à¸™à¸ªà¸´à¸™à¸„à¹‰à¸² \"{$product->name}\" à¹€à¸£à¸µà¸¢à¸šà¸£à¹‰à¸­à¸¢à¹à¸¥à¹‰à¸§");
+        return back()->with('success', __('admin/products.flash.restored', ['name' => $product->name]));
     }
 
     public function toggleFeatured(Product $product): RedirectResponse
@@ -129,7 +129,7 @@ class ProductController extends Controller
         $product = $this->service->toggleFeatured($product);
 
         return back()->with('success', $product->featured
-            ? "à¸•à¸±à¹‰à¸‡ \"{$product->name}\" à¹€à¸›à¹‡à¸™à¸ªà¸´à¸™à¸„à¹‰à¸²à¹à¸™à¸°à¸™à¸³à¹à¸¥à¹‰à¸§"
-            : "à¸™à¸³ \"{$product->name}\" à¸­à¸­à¸à¸ˆà¸²à¸à¸ªà¸´à¸™à¸„à¹‰à¸²à¹à¸™à¸°à¸™à¸³à¹à¸¥à¹‰à¸§");
+            ? __('admin/products.flash.featured_on', ['name' => $product->name])
+            : __('admin/products.flash.featured_off', ['name' => $product->name]));
     }
 }

@@ -21,6 +21,7 @@ class Banner extends Model
     protected $fillable = [
         'title',
         'subtitle',
+        'show_title',
         'image',
         'link',
         'position',
@@ -32,6 +33,7 @@ class Banner extends Model
     {
         return [
             'position' => BannerPosition::class,
+            'show_title' => 'boolean',
             'is_active' => 'boolean',
         ];
     }

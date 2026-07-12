@@ -23,6 +23,7 @@ class BannerRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:150'],
             'subtitle' => ['nullable', 'string', 'max:255'],
+            'show_title' => ['boolean'],
             'image' => [$this->route('banner') ? 'nullable' : 'required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
             'link' => ['nullable', 'string', 'max:255'],
             'position' => ['required', Rule::enum(BannerPosition::class)],
@@ -33,6 +34,9 @@ class BannerRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge(['is_active' => $this->boolean('is_active')]);
+        $this->merge([
+            'show_title' => $this->boolean('show_title'),
+            'is_active' => $this->boolean('is_active'),
+        ]);
     }
 }

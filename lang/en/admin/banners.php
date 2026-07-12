@@ -30,6 +30,8 @@ return [
         'position_label' => 'Position',
         'sort_order_label' => 'Sort order',
         'is_active_label' => 'Show this banner',
+        'show_title_label' => 'Overlay title/subtitle on the image',
+        'show_title_hint' => 'Turn off if the image already has text baked in, to avoid overlapping text (the title is still kept for SEO).',
         'image_label' => 'Banner image',
         'image_hint' => '(1600×600 recommended for Hero)',
         'submit_create' => 'Add banner',

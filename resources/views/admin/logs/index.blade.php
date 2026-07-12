@@ -25,8 +25,10 @@
                         <tr class="hover:bg-gray-50/60">
                             <td class="whitespace-nowrap px-5 py-3 text-gray-400">{{ $log->created_at->format('d/m/Y H:i:s') }}</td>
                             <td class="px-5 py-3">{{ $log->user?->name ?? __('admin/logs.system_user') }}</td>
-                            <td class="px-5 py-3"><code class="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-700">{{ $log->action }}</code></td>
-                            <td class="max-w-md truncate px-5 py-3 text-gray-500">{{ $log->properties ? json_encode($log->properties, JSON_UNESCAPED_UNICODE) : '-' }}</td>
+                            <td class="whitespace-nowrap px-5 py-3">
+                                <span class="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">{{ $log->actionLabel() }}</span>
+                            </td>
+                            <td class="max-w-md truncate px-5 py-3 text-gray-500" title="{{ $log->description() }}">{{ $log->description() }}</td>
                             <td class="px-5 py-3 text-gray-400">{{ $log->ip_address }}</td>
                         </tr>
                     @empty

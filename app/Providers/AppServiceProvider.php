@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\EloquentProductRepository;
 use App\View\Composers\StorefrontComposer;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -40,6 +42,23 @@ class AppServiceProvider extends ServiceProvider
         View::composer(['components.storefront-layout', 'storefront.*'], StorefrontComposer::class);
 
         $this->configureRateLimiting();
+        $this->configureAdminGates();
+    }
+
+    /**
+     * One Gate per admin-panel section, resolved against the user's role tier
+     * (see App\Enums\UserRole::can()). Used both as route middleware
+     * (`can:<ability>`) and to hide sidebar links the current admin can't reach.
+     */
+    protected function configureAdminGates(): void
+    {
+        foreach ([
+            'products', 'orders', 'reviews',
+            'categories', 'coupons', 'banners', 'customers', 'logs',
+            'users', 'settings',
+        ] as $ability) {
+            Gate::define($ability, fn (User $user): bool => $user->role_id->can($ability));
+        }
     }
 
     protected function configureRateLimiting(): void

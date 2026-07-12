@@ -8,6 +8,8 @@ namespace App\Models;
 use App\Enums\UserRole;
 use App\Enums\UserStatus;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -116,9 +118,25 @@ class User extends Authenticatable
         return $this->hasMany(CartItem::class);
     }
 
+    /**
+     * Whether this user has any admin-panel access (Owner, Admin, or Staff tier).
+     */
     public function isAdmin(): bool
     {
-        return $this->role_id === UserRole::Admin;
+        return $this->role_id->isAdminTier();
+    }
+
+    /**
+     * Staff/admin accounts only — excludes ordinary customers. Used by the
+     * admin "Users" management page, which manages organization accounts,
+     * not customer accounts (those live under "Customers" instead).
+     *
+     * @param  Builder<User>  $query
+     */
+    #[Scope]
+    protected function adminTier(Builder $query): void
+    {
+        $query->where('role_id', '!=', UserRole::User->value);
     }
 
     public function isBanned(): bool

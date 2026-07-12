@@ -43,6 +43,7 @@ Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
 */
 
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+Route::get('/cart/mini', [CartController::class, 'mini'])->name('cart.mini');
 Route::middleware('throttle:cart')->group(function () {
     Route::post('/cart', [CartController::class, 'store'])->name('cart.store');
     Route::patch('/cart/{item}', [CartController::class, 'update'])->name('cart.update');

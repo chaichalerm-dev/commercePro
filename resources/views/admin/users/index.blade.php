@@ -32,7 +32,7 @@
                             </td>
                             <td class="px-5 py-3">
                                 @if ($user->is(auth()->user()))
-                                    <span class="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-600">{{ $user->role_id->label() }}</span>
+                                    <span class="whitespace-nowrap rounded-full bg-violet-50 px-2.5 py-1 text-xs font-medium text-violet-600">{{ $user->role_id->label() }}</span>
                                 @else
                                     <form method="POST" action="{{ route('admin.users.role', $user) }}">
                                         @csrf @method('PATCH')
@@ -46,7 +46,7 @@
                                 @endif
                             </td>
                             <td class="px-5 py-3">
-                                <span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $user->isBanned() ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-600' }}">
+                                <span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium {{ $user->isBanned() ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-600' }}">
                                     {{ $user->status->label() }}
                                 </span>
                             </td>

@@ -21,6 +21,7 @@ class UserController extends Controller
     {
         $users = User::query()
             ->with('role')
+            ->adminTier()
             ->when(filled($request->query('q')), function ($query) use ($request): void {
                 $term = trim((string) $request->query('q'));
                 $operator = DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
@@ -33,37 +34,42 @@ class UserController extends Controller
 
         return view('admin.users.index', [
             'users' => $users,
-            'roles' => UserRole::cases(),
+            'roles' => UserRole::adminTiers(),
         ]);
     }
 
     public function updateRole(Request $request, User $user): RedirectResponse
     {
         if ($user->is($request->user())) {
-            return back()->with('error', 'à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¸šà¸—à¸šà¸²à¸—à¸‚à¸­à¸‡à¸•à¸±à¸§à¹€à¸­à¸‡à¹„à¸”à¹‰');
+            return back()->with('error', __('admin/users.flash.cannot_change_own_role'));
         }
 
-        $validated = $request->validate(['role_id' => ['required', Rule::enum(UserRole::class)]]);
+        $validated = $request->validate([
+            'role_id' => ['required', Rule::in(array_map(fn (UserRole $role) => $role->value, UserRole::adminTiers()))],
+        ]);
 
         $user->update(['role_id' => UserRole::from((int) $validated['role_id'])]);
 
-        ActivityLog::record('user.role_changed', $user, ['role' => $user->role_id->name]);
+        ActivityLog::record('user.role_changed', $user, ['name' => $user->name, 'role' => $user->role_id->name]);
 
-        return back()->with('success', "à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¸šà¸—à¸šà¸²à¸—à¸‚à¸­à¸‡ {$user->name} à¹€à¸›à¹‡à¸™ {$user->role_id->label()} à¹à¸¥à¹‰à¸§");
+        return back()->with('success', __('admin/users.flash.role_changed', [
+            'name' => $user->name,
+            'role' => $user->role_id->label(),
+        ]));
     }
 
     public function toggleBan(Request $request, User $user): RedirectResponse
     {
         if ($user->is($request->user())) {
-            return back()->with('error', 'à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¸£à¸°à¸‡à¸±à¸šà¸šà¸±à¸à¸Šà¸µà¸‚à¸­à¸‡à¸•à¸±à¸§à¹€à¸­à¸‡à¹„à¸”à¹‰');
+            return back()->with('error', __('admin/users.flash.cannot_ban_self'));
         }
 
         $user->update(['status' => $user->isBanned() ? UserStatus::Active : UserStatus::Banned]);
 
-        ActivityLog::record('user.status_changed', $user, ['status' => $user->status->value]);
+        ActivityLog::record('user.status_changed', $user, ['name' => $user->name, 'status' => $user->status->value]);
 
         return back()->with('success', $user->isBanned()
-            ? "à¸£à¸°à¸‡à¸±à¸šà¸šà¸±à¸à¸Šà¸µ {$user->name} à¹à¸¥à¹‰à¸§"
-            : "à¸›à¸¥à¸”à¸£à¸°à¸‡à¸±à¸šà¸šà¸±à¸à¸Šà¸µ {$user->name} à¹à¸¥à¹‰à¸§");
+            ? __('admin/users.flash.banned', ['name' => $user->name])
+            : __('admin/users.flash.unbanned', ['name' => $user->name]));
     }
 }

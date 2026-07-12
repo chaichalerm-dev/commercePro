@@ -4,12 +4,17 @@ return [
 
     'fields' => [
         'category_id' => 'หมวดหมู่',
+        'sku' => 'SKU',
+        'slug' => 'Slug',
         'name' => 'ชื่อสินค้า',
+        'description' => 'รายละเอียดสินค้า',
         'price' => 'ราคา',
         'compare_at_price' => 'ราคาก่อนลด',
         'stock' => 'จำนวนสต็อก',
         'thumbnail' => 'รูปหลัก',
         'images' => 'รูปภาพ',
+        'status' => 'สถานะ',
+        'featured' => 'สินค้าแนะนำ',
     ],
 
     'title' => 'จัดการสินค้า',

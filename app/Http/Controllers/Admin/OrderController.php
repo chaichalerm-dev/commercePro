@@ -64,7 +64,7 @@ class OrderController extends Controller
 
         $this->service->transition($order, OrderStatus::from($validated['status']));
 
-        return back()->with('success', "à¸­à¸±à¸›à¹€à¸”à¸•à¸ªà¸–à¸²à¸™à¸°à¹€à¸›à¹‡à¸™ \"{$order->refresh()->status->label()}\" à¹à¸¥à¹‰à¸§");
+        return back()->with('success', __('admin/orders.flash.status_updated', ['status' => $order->refresh()->status->label()]));
     }
 
     public function updatePayment(Request $request, Order $order): RedirectResponse
@@ -75,6 +75,6 @@ class OrderController extends Controller
 
         $this->service->updatePaymentStatus($order, PaymentStatus::from($validated['payment_status']));
 
-        return back()->with('success', 'à¸­à¸±à¸›à¹€à¸”à¸•à¸ªà¸–à¸²à¸™à¸°à¸à¸²à¸£à¸Šà¸³à¸£à¸°à¹€à¸‡à¸´à¸™à¹à¸¥à¹‰à¸§');
+        return back()->with('success', __('admin/orders.flash.payment_updated'));
     }
 }

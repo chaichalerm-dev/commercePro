@@ -50,10 +50,39 @@ class UserFactory extends Factory
         ]);
     }
 
+    /**
+     * Full-access admin (Owner tier). Kept named `admin()` for backward
+     * compatibility with existing tests that expect unrestricted panel access.
+     */
     public function admin(): static
     {
         return $this->state(fn (array $attributes) => [
+            'role_id' => UserRole::Owner,
+        ]);
+    }
+
+    public function owner(): static
+    {
+        return $this->admin();
+    }
+
+    /**
+     * Mid-tier admin: store operations, but not user/role or settings management.
+     */
+    public function staffAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
             'role_id' => UserRole::Admin,
+        ]);
+    }
+
+    /**
+     * Bottom-tier admin: day-to-day products/orders/reviews only.
+     */
+    public function staff(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role_id' => UserRole::Staff,
         ]);
     }
 

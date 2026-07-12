@@ -29,9 +29,14 @@
                             <img src="{{ $banner->image_url }}" alt="{{ $banner->title }}" class="h-full w-full object-cover" @if(!$loop->first) loading="lazy" @endif>
                             <div class="absolute inset-0 flex flex-col justify-center bg-gradient-to-r from-black/50 via-black/20 to-transparent p-8 sm:p-12">
                                 <span class="mb-3 w-fit rounded-full bg-primary-500 px-3 py-1 text-xs font-semibold text-white">{{ __('storefront/home.promo_badge') }}</span>
-                                <h2 class="max-w-md text-2xl font-bold leading-tight text-white sm:text-4xl">{{ $banner->title }}</h2>
-                                @if ($banner->subtitle)
-                                    <p class="mt-2 max-w-sm text-sm text-gray-100 sm:text-base">{{ $banner->subtitle }}</p>
+                                @if ($banner->show_title)
+                                    <h2 class="max-w-md text-2xl font-bold leading-tight text-white sm:text-4xl">{{ $banner->title }}</h2>
+                                    @if ($banner->subtitle)
+                                        <p class="mt-2 max-w-sm text-sm text-gray-100 sm:text-base">{{ $banner->subtitle }}</p>
+                                    @endif
+                                @else
+                                    {{-- Kept for SEO/screen readers even when the image already has its own text baked in. --}}
+                                    <span class="sr-only">{{ $banner->title }}</span>
                                 @endif
                                 <a href="{{ $banner->link ?? route('products.index') }}"
                                    class="mt-5 w-fit rounded-xl bg-primary-500 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-primary-600">
@@ -93,12 +98,17 @@
                        class="group relative block overflow-hidden rounded-2xl shadow-sm">
                         <img src="{{ $banner->image_url }}" alt="{{ $banner->title }}" loading="lazy"
                              class="aspect-[2/1] w-full object-cover transition duration-300 group-hover:scale-105">
-                        <div class="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/60 to-transparent p-6">
-                            <h3 class="text-lg font-bold text-white">{{ $banner->title }}</h3>
-                            @if ($banner->subtitle)
-                                <p class="mt-1 text-sm text-gray-200">{{ $banner->subtitle }}</p>
-                            @endif
-                        </div>
+                        @if ($banner->show_title)
+                            <div class="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/60 to-transparent p-6">
+                                <h3 class="text-lg font-bold text-white">{{ $banner->title }}</h3>
+                                @if ($banner->subtitle)
+                                    <p class="mt-1 text-sm text-gray-200">{{ $banner->subtitle }}</p>
+                                @endif
+                            </div>
+                        @else
+                            {{-- Kept for SEO/screen readers even when the image already has its own text baked in. --}}
+                            <span class="sr-only">{{ $banner->title }}</span>
+                        @endif
                     </a>
                 @endforeach
             </section>

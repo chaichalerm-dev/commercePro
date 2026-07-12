@@ -161,7 +161,7 @@ class OrderService
 
         $order->update(['status' => $to]);
 
-        ActivityLog::record('order.status_changed', $order, ['to' => $to->value]);
+        ActivityLog::record('order.status_changed', $order, ['order_number' => $order->order_number, 'to' => $to->value]);
 
         return $order;
     }
@@ -170,7 +170,7 @@ class OrderService
     {
         $order->update(['payment_status' => $status]);
 
-        ActivityLog::record('order.payment_changed', $order, ['to' => $status->value]);
+        ActivityLog::record('order.payment_changed', $order, ['order_number' => $order->order_number, 'to' => $status->value]);
 
         return $order;
     }

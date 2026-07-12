@@ -28,7 +28,9 @@ return [
     ],
 
     'user_role' => [
-        'admin' => 'Administrator',
+        'owner' => 'Owner',
+        'admin' => 'Admin',
+        'staff' => 'Staff',
         'user' => 'Customer',
     ],
 

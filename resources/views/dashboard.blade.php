@@ -40,7 +40,7 @@
                            class="flex flex-wrap items-center gap-3 rounded-2xl border border-gray-100 bg-white px-5 py-3.5 shadow-sm transition hover:border-primary-200">
                             <span class="min-w-0 flex-1 truncate text-sm font-semibold text-primary-600">{{ $order->order_number }}</span>
                             <span class="text-xs text-gray-400">{{ $order->created_at->format('d/m/Y') }}</span>
-                            <span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span>
+                            <span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span>
                             <span class="text-sm font-bold">{{ money((float) $order->grand_total) }}</span>
                         </a>
                     @endforeach

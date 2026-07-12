@@ -150,7 +150,7 @@ return [
     'string' => ':attribute ต้องเป็นข้อความ',
     'timezone' => ':attribute ต้องเป็นเขตเวลาที่ถูกต้อง',
     'unique' => ':attribute นี้ถูกใช้งานแล้ว',
-    'uploaded' => 'อัปโหลด :attribute ไม่สำเร็จ',
+    'uploaded' => 'อัปโหลด :attribute ไม่สำเร็จ (ไฟล์อาจมีขนาดใหญ่เกินไป)',
     'uppercase' => ':attribute ต้องเป็นตัวพิมพ์ใหญ่',
     'url' => ':attribute ต้องเป็น URL ที่ถูกต้อง',
     'ulid' => ':attribute ต้องเป็น ULID ที่ถูกต้อง',

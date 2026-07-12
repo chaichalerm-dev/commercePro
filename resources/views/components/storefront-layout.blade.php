@@ -34,6 +34,7 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|noto-sans-thai:400,500,600,700" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.password-strength-labels')
 
     {{ $head ?? '' }}
 </head>
@@ -62,5 +63,6 @@
     @include('partials.storefront.footer')
 
     <x-confirm-dialog />
+    <x-cart-drawer />
 </body>
 </html>

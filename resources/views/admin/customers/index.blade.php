@@ -37,7 +37,7 @@
                             <td class="px-5 py-3 text-gray-600">{{ number_format($customer->orders_count) }}</td>
                             <td class="px-5 py-3 font-semibold">{{ money((float) ($customer->total_spent ?? 0)) }}</td>
                             <td class="px-5 py-3">
-                                <span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $customer->isBanned() ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-600' }}">
+                                <span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium {{ $customer->isBanned() ? 'bg-red-50 text-red-500' : 'bg-emerald-50 text-emerald-600' }}">
                                     {{ $customer->status->label() }}
                                 </span>
                             </td>

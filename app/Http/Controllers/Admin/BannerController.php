@@ -19,8 +19,13 @@ class BannerController extends Controller
 {
     public function index(): View
     {
+        $positions = BannerPosition::cases();
+
         return view('admin.banners.index', [
-            'banners' => Banner::query()->orderBy('position')->orderBy('sort_order')->paginate(15),
+            'positions' => $positions,
+            'bannersByPosition' => collect($positions)->mapWithKeys(
+                fn (BannerPosition $position) => [$position->value => Banner::query()->position($position)->get()],
+            ),
         ]);
     }
 

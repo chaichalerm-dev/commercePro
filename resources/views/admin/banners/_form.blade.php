@@ -25,6 +25,17 @@
                        class="mt-1.5 w-full rounded-xl border-gray-200 text-sm focus:border-primary-400 focus:ring-primary-400">
             </div>
 
+            <div class="sm:col-span-2">
+                <label class="flex cursor-pointer items-start gap-2">
+                    <input type="checkbox" name="show_title" value="1" @checked(old('show_title', $banner?->show_title ?? true))
+                           class="mt-0.5 rounded border-gray-300 text-primary-500 focus:ring-primary-400">
+                    <span>
+                        <span class="block text-sm font-medium text-gray-700">{{ __('admin/banners.form.show_title_label') }}</span>
+                        <span class="block text-xs text-gray-400">{{ __('admin/banners.form.show_title_hint') }}</span>
+                    </span>
+                </label>
+            </div>
+
             <div>
                 <label for="link" class="block text-sm font-medium text-gray-700">{{ __('admin/banners.form.link_label') }}</label>
                 <input id="link" type="text" name="link" value="{{ old('link', $banner?->link) }}" placeholder="/products?on_sale=1"

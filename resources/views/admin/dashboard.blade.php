@@ -57,8 +57,8 @@
                                 <td class="px-5 py-3 font-medium text-primary-600">{{ $order->order_number }}</td>
                                 <td class="px-5 py-3">{{ $order->user->name }}</td>
                                 <td class="px-5 py-3 font-semibold">{{ money((float) $order->grand_total) }}</td>
-                                <td class="px-5 py-3"><span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span></td>
-                                <td class="px-5 py-3"><span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $order->payment_status->color() }}">{{ $order->payment_status->label() }}</span></td>
+                                <td class="px-5 py-3"><span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span></td>
+                                <td class="px-5 py-3"><span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium {{ $order->payment_status->color() }}">{{ $order->payment_status->label() }}</span></td>
                                 <td class="px-5 py-3 text-gray-400">{{ $order->created_at->format('d/m/Y') }}</td>
                             </tr>
                         @empty
@@ -106,7 +106,7 @@
                             <p class="truncate text-sm font-medium text-gray-800">{{ $product->name }}</p>
                             <p class="text-xs text-gray-400">SKU: {{ $product->sku }}</p>
                         </div>
-                        <span class="rounded-full px-2.5 py-1 text-xs font-bold {{ $product->stock === 0 ? 'bg-red-50 text-red-500' : 'bg-amber-50 text-amber-600' }}">
+                        <span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-bold {{ $product->stock === 0 ? 'bg-red-50 text-red-500' : 'bg-amber-50 text-amber-600' }}">
                             {{ __('admin/dashboard.low_stock.remaining', ['stock' => $product->stock]) }}
                         </span>
                     </li>

@@ -62,8 +62,8 @@ return [
         'contact_heading' => 'Contact Us',
         'phone' => 'Phone: :phone',
         'email' => 'Email: :email',
-        'demo_line1' => 'Portfolio demo project',
-        'demo_line2' => 'No real transactions take place',
+        'demo_line1' => 'A demonstration site built to showcase development work',
+        'demo_line2' => 'All products and transactions are simulated for demo purposes only',
         'copyright' => '© :year :site. All rights reserved.',
     ],
 

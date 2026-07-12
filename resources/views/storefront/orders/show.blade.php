@@ -8,8 +8,8 @@
                 <p class="mt-1 text-sm text-gray-400">{{ __('storefront/orders.show.ordered_at', ['date' => $order->created_at->format('d/m/Y H:i')]) }}</p>
             </div>
             <div class="flex gap-2">
-                <span class="rounded-full px-3 py-1.5 text-sm font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span>
-                <span class="rounded-full px-3 py-1.5 text-sm font-medium {{ $order->payment_status->color() }}">{{ $order->payment_status->label() }}</span>
+                <span class="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span>
+                <span class="whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-medium {{ $order->payment_status->color() }}">{{ $order->payment_status->label() }}</span>
             </div>
         </div>
 

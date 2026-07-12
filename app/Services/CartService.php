@@ -183,7 +183,7 @@ class CartService
         }
     }
 
-    protected function availableStock(Product $product, ?ProductVariant $variant): int
+    public function availableStock(Product $product, ?ProductVariant $variant): int
     {
         return $variant !== null ? min($variant->stock, $product->stock) : $product->stock;
     }

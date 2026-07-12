@@ -19,6 +19,7 @@ return [
     'login_cta' => 'Log In to Checkout',
     'login_note' => 'Your cart items will be saved after you log in',
     'continue_shopping' => 'Continue Shopping',
+    'view_full_cart' => 'View full cart',
 
     'flash' => [
         'added' => 'Added ":product" to your cart.',

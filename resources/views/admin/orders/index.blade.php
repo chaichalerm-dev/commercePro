@@ -42,12 +42,14 @@
                             <td class="px-5 py-3">{{ $order->user->name }}</td>
                             <td class="px-5 py-3 text-gray-500">{{ $order->items_count }}</td>
                             <td class="px-5 py-3 font-semibold">{{ money((float) $order->grand_total) }}</td>
-                            <td class="px-5 py-3"><span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span></td>
-                            <td class="px-5 py-3"><span class="rounded-full px-2.5 py-1 text-xs font-medium {{ $order->payment_status->color() }}">{{ $order->payment_status->label() }}</span></td>
+                            <td class="px-5 py-3"><span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium {{ $order->status->color() }}">{{ $order->status->label() }}</span></td>
+                            <td class="px-5 py-3"><span class="whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium {{ $order->payment_status->color() }}">{{ $order->payment_status->label() }}</span></td>
                             <td class="px-5 py-3 text-gray-400">{{ $order->created_at->format('d/m/Y') }}</td>
                             <td class="px-5 py-3 text-right">
-                                <a href="{{ route('admin.orders.show', $order) }}"
-                                   class="rounded-lg bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-600 transition hover:bg-blue-100">{{ __('admin/orders.table.view_details') }}</a>
+                                <a href="{{ route('admin.orders.show', $order) }}" title="{{ __('admin/orders.table.view_details') }}"
+                                   class="rounded-lg p-2 text-gray-400 transition hover:bg-gray-100 hover:text-gray-600">
+                                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                </a>
                             </td>
                         </tr>
                     @empty

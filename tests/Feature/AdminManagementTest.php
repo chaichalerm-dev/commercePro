@@ -51,7 +51,7 @@ class AdminManagementTest extends TestCase
         $this->actingAs($this->admin)
             ->patch("/admin/users/{$this->admin->id}/role", ['role_id' => UserRole::User->value])
             ->assertSessionHas('error');
-        $this->assertSame(UserRole::Admin, $this->admin->refresh()->role_id);
+        $this->assertSame(UserRole::Owner, $this->admin->refresh()->role_id);
     }
 
     public function test_unapproved_reviews_are_hidden_until_moderated(): void

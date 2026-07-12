@@ -31,6 +31,11 @@ return [
         'badge' => 'เร็วๆ นี้',
     ],
 
+    'sidebar' => [
+        'collapse' => 'ย่อเมนู',
+        'expand' => 'ขยายเมนู',
+    ],
+
     'topbar' => [
         'open_menu' => 'เปิดเมนู',
         'view_storefront' => 'ดูหน้าร้าน',
