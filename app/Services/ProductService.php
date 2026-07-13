@@ -163,7 +163,7 @@ class ProductService
 
     protected function storeImage(UploadedFile $file): string
     {
-        return $file->store(self::IMAGE_DIR, 'public');
+        return $file->store(self::IMAGE_DIR, config('filesystems.default'));
     }
 
     /**
@@ -172,7 +172,7 @@ class ProductService
     protected function deleteImageFile(?string $path): void
     {
         if (filled($path) && ! Str::startsWith($path, ['http://', 'https://'])) {
-            Storage::disk('public')->delete($path);
+            Storage::disk(config('filesystems.default'))->delete($path);
         }
     }
 

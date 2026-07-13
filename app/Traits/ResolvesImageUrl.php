@@ -24,6 +24,6 @@ trait ResolvesImageUrl
             return $path;
         }
 
-        return Storage::disk('public')->url($path);
+        return Storage::disk(config('filesystems.default'))->url($path);
     }
 }

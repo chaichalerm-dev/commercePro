@@ -41,7 +41,7 @@ class Setting extends Model
             return null;
         }
 
-        return Str::startsWith($value, ['http://', 'https://']) ? $value : Storage::disk('public')->url($value);
+        return Str::startsWith($value, ['http://', 'https://']) ? $value : Storage::disk(config('filesystems.default'))->url($value);
     }
 
     public static function set(string $key, ?string $value, string $group = 'general'): void

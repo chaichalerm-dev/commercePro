@@ -79,7 +79,7 @@ class BannerController extends Controller
 
         if ($request->hasFile('image')) {
             $this->deleteImageFile($banner?->image);
-            $data['image'] = $request->file('image')->store('banners', 'public');
+            $data['image'] = $request->file('image')->store('banners', config('filesystems.default'));
         }
 
         return $data;
@@ -88,7 +88,7 @@ class BannerController extends Controller
     protected function deleteImageFile(?string $path): void
     {
         if (filled($path) && ! Str::startsWith($path, ['http://', 'https://'])) {
-            Storage::disk('public')->delete($path);
+            Storage::disk(config('filesystems.default'))->delete($path);
         }
     }
 }

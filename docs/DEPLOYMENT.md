@@ -114,7 +114,27 @@ Render's auto-detected "native" runtime picks a build/start flow based on which 
 
 ## Uploaded Images on PaaS
 
-Container filesystems are ephemeral. Demo/seed images are external URLs and unaffected, but admin uploads need either a persistent disk (Render) / volume (Railway) mounted over `storage/app/public`, or a swap of `FILESYSTEM_DISK` to an S3-compatible bucket (Supabase Storage works) — the `ResolvesImageUrl` trait already handles absolute URLs, so no view changes are needed.
+Container filesystems are ephemeral — on Render's free tier in particular, every restart or redeploy wipes the local disk, so anything saved under `storage/app/public` via the admin panel (logo, favicon, banner, product/category images) vanishes even though the database still has its path on record. Demo/seed images are unaffected since those are external URLs (picsum), not local files.
+
+The app is set up to use **Supabase Storage** (S3-compatible, same Supabase project already used for the database) as the fix — set `FILESYSTEM_DISK=s3` and fill in the `AWS_*` variables:
+
+1. Supabase Dashboard → **Storage** → create a new bucket, mark it **Public**.
+2. Supabase Dashboard → **Project Settings → Storage → S3 Connection** to get the access key ID/secret and the region.
+3. Set these env vars (already templated in `render.yaml` with `sync: false`, so Render prompts for them in the dashboard rather than storing them in the repo):
+   ```dotenv
+   FILESYSTEM_DISK=s3
+   AWS_ACCESS_KEY_ID=...
+   AWS_SECRET_ACCESS_KEY=...
+   AWS_DEFAULT_REGION=ap-southeast-1        # your Supabase project's region
+   AWS_BUCKET=your-bucket-name
+   AWS_ENDPOINT=https://<project-ref>.supabase.co/storage/v1/s3
+   AWS_URL=https://<project-ref>.supabase.co/storage/v1/object/public/your-bucket-name
+   AWS_USE_PATH_STYLE_ENDPOINT=true          # required — Supabase doesn't support virtual-hosted-style addressing
+   ```
+
+`FILESYSTEM_DISK` is read dynamically everywhere a file gets stored, deleted, or resolved to a URL (`ResolvesImageUrl`, `Setting::url()`, and the admin controllers' upload handling) — flipping this one env var moves all of it between local disk and S3 consistently, no code changes needed.
+
+Alternative: attach a Render **persistent Disk** mounted at `storage/app/public` instead (requires a paid plan, not available on Free) — simpler if you'd rather not touch storage config at all, but ties you to Render specifically rather than a portable S3-compatible target.
 
 ## Post-deploy Checklist
 

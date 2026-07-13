@@ -53,6 +53,12 @@ return [
             'report' => false,
         ],
 
+        // Used in production (FILESYSTEM_DISK=s3) so uploads survive restarts on
+        // hosts with an ephemeral filesystem (e.g. Render's free tier wipes local
+        // disk on every restart/redeploy). Points at Supabase Storage, which is
+        // S3-compatible — endpoint is https://<project-ref>.supabase.co/storage/v1/s3
+        // and path-style addressing is required (Supabase doesn't support the
+        // virtual-hosted-style bucket-in-subdomain form AWS defaults to).
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -61,7 +67,7 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', true),
             'throw' => false,
             'report' => false,
         ],

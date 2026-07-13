@@ -88,10 +88,10 @@ class CategoryController extends Controller
             $old = $category?->image;
 
             if (filled($old) && ! Str::startsWith($old, ['http://', 'https://'])) {
-                Storage::disk('public')->delete($old);
+                Storage::disk(config('filesystems.default'))->delete($old);
             }
 
-            $data['image'] = $request->file('image')->store('categories', 'public');
+            $data['image'] = $request->file('image')->store('categories', config('filesystems.default'));
         }
 
         return $data;

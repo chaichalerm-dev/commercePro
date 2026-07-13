@@ -77,10 +77,10 @@ class SettingController extends Controller
                 $old = Setting::get($key);
 
                 if (filled($old) && ! Str::startsWith((string) $old, ['http://', 'https://'])) {
-                    Storage::disk('public')->delete((string) $old);
+                    Storage::disk(config('filesystems.default'))->delete((string) $old);
                 }
 
-                Setting::set($key, $request->file($key)->store('settings', 'public'), 'general');
+                Setting::set($key, $request->file($key)->store('settings', config('filesystems.default')), 'general');
             }
         }
 
