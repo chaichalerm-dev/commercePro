@@ -166,4 +166,22 @@ window.passwordStrengthMeta = function (value) {
     };
 };
 
+// Uploaded images (logo, banners, product/category photos) can 404 for
+// reasons a Blade-time check can't catch — most notably on ephemeral PaaS
+// storage (e.g. Render's free tier wipes the local disk on every restart,
+// so a path saved in the DB can outlive the actual file). The `error` event
+// doesn't bubble, so this needs a capturing listener on `document` rather
+// than a delegated one. Swaps to the same placeholder `resolveImageUrl()`
+// already falls back to server-side when no path is stored at all, so both
+// cases (never had an image / had one but the file is gone) end up looking
+// identical instead of a broken-image icon or blank space.
+const BROKEN_IMAGE_FALLBACK = '/images/placeholder.svg';
+document.addEventListener('error', (event) => {
+    const img = event.target;
+    if (!(img instanceof HTMLImageElement)) return;
+    if (img.dataset.noFallback !== undefined) return;
+    if (img.src.endsWith(BROKEN_IMAGE_FALLBACK)) return;
+    img.src = BROKEN_IMAGE_FALLBACK;
+}, true);
+
 Alpine.start();
