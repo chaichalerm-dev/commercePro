@@ -30,7 +30,7 @@ services:
       - key: DB_HOST
         sync: false
       - key: DB_PORT
-        value: "5432"
+        value: "6543" # transaction-mode pooler, not the session-mode 5432 port — session mode caps the whole Supabase project at pool_size (often 15) *total* simultaneous connections, which this app's persistent PDO connections (config/database.php) exhaust quickly across a few Apache workers
       - key: DB_DATABASE
         value: postgres
       - key: DB_USERNAME
