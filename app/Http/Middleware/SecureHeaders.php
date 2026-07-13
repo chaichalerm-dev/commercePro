@@ -44,16 +44,25 @@ class SecureHeaders
      */
     private function contentSecurityPolicy(string $nonce): string
     {
+        $imgSrc = implode(' ', array_filter([
+            "'self'",
+            // picsum.photos (seed/demo product images) 302-redirects every
+            // request to fastly.picsum.photos for the actual bytes, and CSP
+            // enforces img-src against the redirect target too — the wildcard
+            // covers that CDN hop without hardcoding a specific subdomain.
+            'https://picsum.photos',
+            'https://*.picsum.photos',
+            $this->s3ImageHost(),
+            'blob:',
+            'data:',
+        ]));
+
         return implode('; ', [
             "default-src 'self'",
             "script-src 'self' 'nonce-{$nonce}' 'unsafe-eval'",
             "style-src 'self' https://fonts.bunny.net",
             "font-src 'self' https://fonts.bunny.net",
-            // picsum.photos (seed/demo product images) 302-redirects every
-            // request to fastly.picsum.photos for the actual bytes, and CSP
-            // enforces img-src against the redirect target too — the wildcard
-            // covers that CDN hop without hardcoding a specific subdomain.
-            "img-src 'self' https://picsum.photos https://*.picsum.photos blob: data:",
+            "img-src {$imgSrc}",
             "connect-src 'self'",
             "frame-src 'none'",
             "frame-ancestors 'self'",
@@ -61,5 +70,25 @@ class SecureHeaders
             "base-uri 'self'",
             "form-action 'self'",
         ]);
+    }
+
+    /**
+     * When FILESYSTEM_DISK=s3 (production, uploads on Supabase Storage —
+     * local disk doesn't survive Render's ephemeral filesystem), uploaded
+     * images are served from AWS_URL's host rather than this app's own
+     * origin, so CSP's img-src must allow it explicitly or every uploaded
+     * image (banners, products, categories, logo) silently fails to render.
+     */
+    private function s3ImageHost(): ?string
+    {
+        $url = config('filesystems.disks.s3.url');
+
+        if (! is_string($url) || $url === '') {
+            return null;
+        }
+
+        $host = parse_url($url, PHP_URL_HOST);
+
+        return $host !== null ? "https://{$host}" : null;
     }
 }
