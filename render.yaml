@@ -47,10 +47,19 @@ services:
         value: database
       - key: CACHE_STORE
         value: file # database would make entrypoint.sh's `optimize:clear` step (which flushes the cache store) do a network round-trip to Supabase on every single boot — same latency reasoning as the local-dev fix, see README's "Local Environment Notes"
+      # public for now: local disk doesn't survive Render's ephemeral filesystem
+      # across restarts/redeploys (uploaded images vanish), but switching to s3
+      # without the AWS_* credentials below filled in on the dashboard makes
+      # every single request crash (Setting::url() throws constructing the S3
+      # disk) — that took the whole site down once already. Once a Supabase
+      # Storage bucket + credentials exist (Supabase Dashboard > Project
+      # Settings > Storage > S3 Connection), fill in the sync:false AWS_* vars
+      # in Render's Environment tab FIRST, confirm a deploy goes live and the
+      # site loads, and only then flip this to s3 and redeploy.
       - key: FILESYSTEM_DISK
-        value: s3 # local disk doesn't survive Render's ephemeral filesystem across restarts/redeploys — see the AWS_* vars below (Supabase Storage, S3-compatible)
+        value: public
       - key: AWS_ACCESS_KEY_ID
-        sync: false # Supabase Dashboard > Project Settings > Storage > S3 Connection
+        sync: false
       - key: AWS_SECRET_ACCESS_KEY
         sync: false
       - key: AWS_DEFAULT_REGION
