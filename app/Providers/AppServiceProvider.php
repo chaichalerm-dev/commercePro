@@ -5,8 +5,10 @@ namespace App\Providers;
 use App\Models\User;
 use App\Repositories\Contracts\ProductRepositoryInterface;
 use App\Repositories\EloquentProductRepository;
+use App\Support\PostgresConnection;
 use App\View\Composers\StorefrontComposer;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -24,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(ProductRepositoryInterface::class, EloquentProductRepository::class);
         $this->app->singleton(StorefrontComposer::class);
+
+        // See App\Support\PostgresConnection: PDO::ATTR_EMULATE_PREPARES
+        // (config/database.php) needs boolean bindings kept as real Postgres
+        // literals instead of Laravel's default int cast.
+        Connection::resolverFor('pgsql', fn ($connection, $database, $prefix, $config) => new PostgresConnection($connection, $database, $prefix, $config));
     }
 
     /**
