@@ -99,8 +99,19 @@ return [
             // fresh connection costs far more than the query itself. Reusing
             // the connection across requests on the same worker process
             // avoids paying that handshake on every single request.
+            //
+            // ATTR_EMULATE_PREPARES is required alongside this: Supabase's
+            // transaction-mode pooler (port 6543) can transparently swap which
+            // actual Postgres backend a given client connection maps to
+            // between queries. A persistent PDO connection that used real
+            // server-side PREPARE would cache a statement handle tied to one
+            // backend, then fail with "prepared statement ... does not exist"
+            // the moment the pooler hands it a different backend. Emulated
+            // (client-side) prepares build the full query with values already
+            // substituted, so there's no server-side handle to go stale.
             'options' => array_filter([
                 PDO::ATTR_PERSISTENT => env('DB_PERSISTENT', true),
+                PDO::ATTR_EMULATE_PREPARES => true,
             ]),
         ],
 
