@@ -46,7 +46,7 @@ services:
       - key: QUEUE_CONNECTION
         value: database
       - key: CACHE_STORE
-        value: database
+        value: file # database would make entrypoint.sh's `optimize:clear` step (which flushes the cache store) do a network round-trip to Supabase on every single boot — same latency reasoning as the local-dev fix, see README's "Local Environment Notes"
       - key: FILESYSTEM_DISK
         value: public
       - key: MAIL_MAILER
