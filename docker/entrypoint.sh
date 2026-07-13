@@ -27,8 +27,15 @@ php artisan storage:link 2>/dev/null || true
 
 # Opt-in: platforms that run a single instance can set RUN_MIGRATIONS=true.
 # Left off by default so a redeploy never runs migrations unattended.
+#
+# Backgrounded deliberately: a slow/first-time migration against a remote DB
+# (cold connection pooler, many tables on the very first run) can easily take
+# longer than a PaaS's health-check startup window, causing the platform to
+# mark the whole deploy "failed" even though the app would become healthy
+# moments later. Running it in parallel with Apache lets the health check
+# pass immediately; migrations still finish within the first few seconds.
 if [ "${RUN_MIGRATIONS:-false}" = "true" ]; then
-    php artisan migrate --force
+    php artisan migrate --force &
 fi
 
 exec supervisord -c /etc/supervisor/conf.d/supervisord.conf
