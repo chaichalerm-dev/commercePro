@@ -79,5 +79,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Order placement: tight — a human never needs more.
         RateLimiter::for('checkout', fn (Request $request) => Limit::perMinute(10)->by($keyFor($request)));
+
+        // Coupon apply: tight enough to make code-guessing impractical, still
+        // generous for someone genuinely retyping a code they mistyped.
+        RateLimiter::for('coupon', fn (Request $request) => Limit::perMinute(10)->by($keyFor($request)));
     }
 }

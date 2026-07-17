@@ -39,6 +39,20 @@ class CartService
         return (int) $this->ownerQuery()->sum('qty');
     }
 
+    /**
+     * Same rows as items(), but row-locked for use inside a checkout
+     * transaction. A concurrent second checkout attempt for the same owner
+     * (double-click, form resubmit) blocks on this lock until the first
+     * commits and clears the cart, then correctly sees an empty cart instead
+     * of independently re-placing the same order.
+     *
+     * @return Collection<int, CartItem>
+     */
+    public function lockedItems(): Collection
+    {
+        return $this->ownerQuery()->lockForUpdate()->latest('id')->get();
+    }
+
     public function subtotal(): float
     {
         return round($this->items()->sum(fn (CartItem $item): float => $item->line_total), 2);

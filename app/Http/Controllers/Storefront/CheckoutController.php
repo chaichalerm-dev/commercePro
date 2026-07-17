@@ -94,8 +94,20 @@ class CheckoutController extends Controller
             return $request->user()->addresses()->findOrFail($request->integer('address_id'));
         }
 
+        $fields = $request->safe()->only(['recipient', 'phone', 'line1', 'district', 'province', 'postal_code']);
+
+        // A resubmitted checkout (double-click, network retry) without an
+        // address_id would otherwise create an identical address row every
+        // time — reuse one that already matches instead of piling up
+        // duplicates in the user's saved-address list.
+        $existing = $request->user()->addresses()->where($fields)->first();
+
+        if ($existing !== null) {
+            return $existing;
+        }
+
         return $request->user()->addresses()->create([
-            ...$request->safe()->only(['recipient', 'phone', 'line1', 'district', 'province', 'postal_code']),
+            ...$fields,
             'label' => __('storefront/checkout.default_address_label'),
             'is_default' => ! $request->user()->addresses()->exists(),
         ]);

@@ -32,13 +32,16 @@ class OrderService
      */
     public function placeFromCart(User $user, Address $address, ?string $couponCode = null): Order
     {
-        $items = $this->cart->items();
+        $order = DB::transaction(function () use ($user, $address, $couponCode): Order {
+            // Locked (not the plain items() read) so a concurrent duplicate
+            // submission for the same cart blocks here rather than racing
+            // past the product-stock check with a stale item snapshot.
+            $items = $this->cart->lockedItems();
 
-        if ($items->isEmpty()) {
-            throw ValidationException::withMessages(['cart' => __('storefront/checkout.errors.cart_empty')]);
-        }
+            if ($items->isEmpty()) {
+                throw ValidationException::withMessages(['cart' => __('storefront/checkout.errors.cart_empty')]);
+            }
 
-        $order = DB::transaction(function () use ($user, $address, $couponCode, $items): Order {
             $subtotal = 0.0;
             $lines = [];
 
