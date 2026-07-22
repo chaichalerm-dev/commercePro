@@ -5,6 +5,14 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     plan: free
+    # Render defaults new services to Oregon; the Supabase project (and every
+    # DB_HOST/AWS_* value below) is ap-southeast-1 — every DB round trip
+    # (including a session read + write on literally every request, since
+    # SESSION_DRIVER=database) was crossing the Pacific twice. Colocating
+    # with Singapore cuts that to same-region latency. Render does not
+    # support changing an existing service's region in place — this only
+    # takes effect on a service created fresh from this Blueprint.
+    region: singapore
     healthCheckPath: /
     envVars:
       - key: APP_NAME
