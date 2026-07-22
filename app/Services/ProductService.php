@@ -8,6 +8,7 @@ use App\Models\ActivityLog;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Support\HomeCache;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -163,7 +164,7 @@ class ProductService
 
     protected function storeImage(UploadedFile $file): string
     {
-        return $file->store(self::IMAGE_DIR, config('filesystems.default'));
+        return ImageOptimizer::store($file, self::IMAGE_DIR, config('filesystems.default'), maxWidth: 1600, maxHeight: 1600);
     }
 
     /**

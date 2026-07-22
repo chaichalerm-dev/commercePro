@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CategoryRequest;
 use App\Models\ActivityLog;
 use App\Models\Category;
+use App\Support\ImageOptimizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
@@ -91,7 +92,7 @@ class CategoryController extends Controller
                 Storage::disk(config('filesystems.default'))->delete($old);
             }
 
-            $data['image'] = $request->file('image')->store('categories', config('filesystems.default'));
+            $data['image'] = ImageOptimizer::store($request->file('image'), 'categories', config('filesystems.default'), maxWidth: 800, maxHeight: 800);
         }
 
         return $data;

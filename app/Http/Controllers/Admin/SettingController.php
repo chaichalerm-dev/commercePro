@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Setting;
+use App\Support\ImageOptimizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -83,12 +84,19 @@ class SettingController extends Controller
                 $file = $request->file($key);
                 $disk = config('filesystems.default');
 
+                $cacheControl = ['CacheControl' => 'public, max-age=31536000, immutable'];
+
                 if (strtolower((string) $file->getClientOriginalExtension()) === 'svg') {
                     $path = 'settings/'.Str::uuid()->toString().'.svg';
-                    Storage::disk($disk)->put($path, self::sanitizeSvg((string) file_get_contents($file->getRealPath())));
+                    Storage::disk($disk)->put($path, self::sanitizeSvg((string) file_get_contents($file->getRealPath())), $cacheControl);
                     Setting::set($key, $path, 'general');
+                } elseif ($key === 'logo') {
+                    // Favicon is left untouched: it's already capped at 512KB
+                    // by validation, and .ico isn't something GD can decode
+                    // anyway, so there's nothing worth optimizing there.
+                    Setting::set($key, ImageOptimizer::store($file, 'settings', $disk, maxWidth: 512, maxHeight: 512, quality: 90), 'general');
                 } else {
-                    Setting::set($key, $file->store('settings', $disk), 'general');
+                    Setting::set($key, $file->store('settings', ['disk' => $disk, ...$cacheControl]), 'general');
                 }
             }
         }

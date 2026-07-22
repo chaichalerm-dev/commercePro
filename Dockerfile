@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         unzip git supervisor \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j"$(nproc)" pdo_pgsql pgsql mbstring bcmath exif pcntl zip gd opcache \
-    && a2enmod rewrite \
+    && a2enmod rewrite expires headers deflate \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer

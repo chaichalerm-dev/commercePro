@@ -10,6 +10,7 @@ use App\Http\Requests\Admin\BannerRequest;
 use App\Models\ActivityLog;
 use App\Models\Banner;
 use App\Support\HomeCache;
+use App\Support\ImageOptimizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
@@ -79,7 +80,7 @@ class BannerController extends Controller
 
         if ($request->hasFile('image')) {
             $this->deleteImageFile($banner?->image);
-            $data['image'] = $request->file('image')->store('banners', config('filesystems.default'));
+            $data['image'] = ImageOptimizer::store($request->file('image'), 'banners', config('filesystems.default'), maxWidth: 1920, maxHeight: 800);
         }
 
         return $data;

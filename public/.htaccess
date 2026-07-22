@@ -1,3 +1,33 @@
+# Long-lived caching for hashed build assets and stored uploads: uploaded
+# files (see App\Support\ImageOptimizer) always get a fresh random filename
+# rather than being overwritten in place, and Vite's /build assets are
+# content-hashed, so it's safe to tell browsers/CDNs to keep these forever
+# instead of re-requesting them on every page view.
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpeg "access plus 1 year"
+    ExpiresByType image/png "access plus 1 year"
+    ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/svg+xml "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    ExpiresByType text/css "access plus 1 year"
+    ExpiresByType application/javascript "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+</IfModule>
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(jpg|jpeg|png|webp|svg|ico|css|js|woff2)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
+
+# Compress text-based responses (HTML/CSS/JS/JSON) in transit. Images are
+# excluded on purpose: JPEG/PNG/WebP are already compressed, so re-running
+# deflate on them wastes CPU for no size benefit.
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml application/javascript application/json application/xml
+</IfModule>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
