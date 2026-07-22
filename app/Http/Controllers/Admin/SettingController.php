@@ -80,12 +80,41 @@ class SettingController extends Controller
                     Storage::disk(config('filesystems.default'))->delete((string) $old);
                 }
 
-                Setting::set($key, $request->file($key)->store('settings', config('filesystems.default')), 'general');
+                $file = $request->file($key);
+                $disk = config('filesystems.default');
+
+                if (strtolower((string) $file->getClientOriginalExtension()) === 'svg') {
+                    $path = 'settings/'.Str::uuid()->toString().'.svg';
+                    Storage::disk($disk)->put($path, self::sanitizeSvg((string) file_get_contents($file->getRealPath())));
+                    Setting::set($key, $path, 'general');
+                } else {
+                    Setting::set($key, $file->store('settings', $disk), 'general');
+                }
             }
         }
 
         ActivityLog::record('settings.updated', null, ['keys' => array_keys($validated)]);
 
         return back()->with('success', __('admin/settings.flash.updated'));
+    }
+
+    /**
+     * Strips script-execution vectors from an uploaded SVG before it's
+     * stored: SVG is XML, so a malicious upload can carry a <script>,
+     * event-handler attributes (onload, onerror, ...), or a javascript:
+     * URI, any of which can run when the file is opened directly in a
+     * browser tab (SVGs served from local disk here bypass this app's
+     * CSP entirely, since Apache serves /storage without going through
+     * Laravel middleware).
+     */
+    private static function sanitizeSvg(string $svg): string
+    {
+        $svg = preg_replace('#<script\b[^>]*>.*?</script>#is', '', $svg) ?? $svg;
+        $svg = preg_replace('#<foreignObject\b[^>]*>.*?</foreignObject>#is', '', $svg) ?? $svg;
+        $svg = preg_replace('#<(iframe|embed|object)\b[^>]*>.*?</\1>#is', '', $svg) ?? $svg;
+        $svg = preg_replace('#\son\w+\s*=\s*(".*?"|\'.*?\'|[^\s>]+)#i', '', $svg) ?? $svg;
+        $svg = preg_replace('#(href|xlink:href)\s*=\s*(["\'])\s*javascript:.*?\2#i', '', $svg) ?? $svg;
+
+        return $svg;
     }
 }

@@ -75,7 +75,10 @@
             {{ __('auth_pages.login.register_cta') }}
         </a>
 
-        @if ((\App\Models\Setting::get('show_demo_credentials', '1')) === '1')
+        {{-- Never leak the seeded Owner-tier password on a real deployment, even
+             if the DB setting is left/switched on by mistake: production is
+             excluded regardless of what the toggle says. --}}
+        @if (! app()->isProduction() && (\App\Models\Setting::get('show_demo_credentials', '1')) === '1')
             <p class="mt-5 rounded-xl bg-gray-50 p-3 text-center text-xs leading-relaxed text-gray-500">
                 {!! __('auth_pages.login.demo_accounts') !!}
             </p>

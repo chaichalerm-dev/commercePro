@@ -34,8 +34,11 @@ class SettingSeeder extends Seeder
                 'shipping_fee' => '50',
                 'currency' => 'THB',
             ],
+            // Off by default: an operator who seeds a real deployment for demo
+            // purposes must opt in explicitly rather than publish the seeded
+            // Owner account's password on the public login page by accident.
             'security' => [
-                'show_demo_credentials' => '1',
+                'show_demo_credentials' => '0',
             ],
         ];
 
