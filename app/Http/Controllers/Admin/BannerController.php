@@ -13,8 +13,6 @@ use App\Support\HomeCache;
 use App\Support\ImageOptimizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class BannerController extends Controller
 {
@@ -62,7 +60,7 @@ class BannerController extends Controller
 
     public function destroy(Banner $banner): RedirectResponse
     {
-        $this->deleteImageFile($banner->image);
+        ImageOptimizer::delete($banner->image, config('filesystems.default'));
         $banner->delete();
 
         ActivityLog::record('banner.deleted', $banner, ['title' => $banner->title]);
@@ -79,17 +77,9 @@ class BannerController extends Controller
         $data = $request->safe()->except('image');
 
         if ($request->hasFile('image')) {
-            $this->deleteImageFile($banner?->image);
-            $data['image'] = ImageOptimizer::store($request->file('image'), 'banners', config('filesystems.default'), maxWidth: 1920, maxHeight: 800);
+            $data['image'] = ImageOptimizer::store($request->file('image'), 'banners', config('filesystems.default'), maxWidth: 1920, maxHeight: 800, replacing: $banner?->image);
         }
 
         return $data;
-    }
-
-    protected function deleteImageFile(?string $path): void
-    {
-        if (filled($path) && ! Str::startsWith($path, ['http://', 'https://'])) {
-            Storage::disk(config('filesystems.default'))->delete($path);
-        }
     }
 }

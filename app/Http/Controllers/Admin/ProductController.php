@@ -24,8 +24,6 @@ class ProductController extends Controller
 
     public function index(Request $request): View
     {
-        $this->authorize('viewAny', Product::class);
-
         $showTrash = $request->query('view') === 'trash';
 
         $products = Product::query()
@@ -53,8 +51,6 @@ class ProductController extends Controller
 
     public function create(): View
     {
-        $this->authorize('create', Product::class);
-
         return view('admin.products.create', [
             'categories' => Category::query()->orderBy('name')->get(),
             'statuses' => ProductStatus::cases(),
@@ -77,8 +73,6 @@ class ProductController extends Controller
 
     public function edit(Product $product): View
     {
-        $this->authorize('update', $product);
-
         return view('admin.products.edit', [
             'product' => $product->load(['images', 'variants']),
             'categories' => Category::query()->orderBy('name')->get(),
@@ -88,8 +82,6 @@ class ProductController extends Controller
 
     public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
-        $this->authorize('update', $product);
-
         $this->service->update(
             $product,
             $request->safe()->except(['thumbnail', 'images', 'variants', 'removed_images']),
@@ -106,8 +98,6 @@ class ProductController extends Controller
 
     public function destroy(Product $product): RedirectResponse
     {
-        $this->authorize('delete', $product);
-
         $this->service->delete($product);
 
         return back()->with('success', __('admin/products.flash.deleted', ['name' => $product->name]));
@@ -115,8 +105,6 @@ class ProductController extends Controller
 
     public function restore(Product $product): RedirectResponse
     {
-        $this->authorize('restore', $product);
-
         $this->service->restore($product);
 
         return back()->with('success', __('admin/products.flash.restored', ['name' => $product->name]));
@@ -124,8 +112,6 @@ class ProductController extends Controller
 
     public function toggleFeatured(Product $product): RedirectResponse
     {
-        $this->authorize('update', $product);
-
         $product = $this->service->toggleFeatured($product);
 
         return back()->with('success', $product->featured

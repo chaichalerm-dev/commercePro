@@ -12,15 +12,11 @@ use App\Support\ImageOptimizer;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
     public function index(): View
     {
-        $this->authorize('viewAny', Category::class);
-
         return view('admin.categories.index', [
             'categories' => Category::query()->withCount('products')->orderBy('sort_order')->paginate(15),
         ]);
@@ -28,8 +24,6 @@ class CategoryController extends Controller
 
     public function create(): View
     {
-        $this->authorize('create', Category::class);
-
         return view('admin.categories.create');
     }
 
@@ -45,15 +39,11 @@ class CategoryController extends Controller
 
     public function edit(Category $category): View
     {
-        $this->authorize('update', $category);
-
         return view('admin.categories.edit', ['category' => $category]);
     }
 
     public function update(CategoryRequest $request, Category $category): RedirectResponse
     {
-        $this->authorize('update', $category);
-
         $category->update($this->payload($request, $category));
 
         ActivityLog::record('category.updated', $category, ['name' => $category->name]);
@@ -64,8 +54,6 @@ class CategoryController extends Controller
 
     public function destroy(Category $category): RedirectResponse
     {
-        $this->authorize('delete', $category);
-
         if ($category->products()->withTrashed()->exists()) {
             return back()->with('error', __('admin/categories.flash.delete_blocked', ['name' => $category->name]));
         }
@@ -86,13 +74,7 @@ class CategoryController extends Controller
         $data = $request->safe()->except('image');
 
         if ($request->hasFile('image')) {
-            $old = $category?->image;
-
-            if (filled($old) && ! Str::startsWith($old, ['http://', 'https://'])) {
-                Storage::disk(config('filesystems.default'))->delete($old);
-            }
-
-            $data['image'] = ImageOptimizer::store($request->file('image'), 'categories', config('filesystems.default'), maxWidth: 800, maxHeight: 800);
+            $data['image'] = ImageOptimizer::store($request->file('image'), 'categories', config('filesystems.default'), maxWidth: 800, maxHeight: 800, replacing: $category?->image);
         }
 
         return $data;

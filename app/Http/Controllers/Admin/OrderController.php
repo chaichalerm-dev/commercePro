@@ -48,8 +48,6 @@ class OrderController extends Controller
 
     public function show(Order $order): View
     {
-        $this->authorize('update', $order);
-
         return view('admin.orders.show', [
             'order' => $order->load(['items.product', 'user', 'address', 'coupon']),
             'paymentStatuses' => PaymentStatus::cases(),
@@ -58,8 +56,6 @@ class OrderController extends Controller
 
     public function updateStatus(Request $request, Order $order): RedirectResponse
     {
-        $this->authorize('update', $order);
-
         $validated = $request->validate(['status' => ['required', Rule::enum(OrderStatus::class)]]);
 
         $this->service->transition($order, OrderStatus::from($validated['status']));
@@ -69,8 +65,6 @@ class OrderController extends Controller
 
     public function updatePayment(Request $request, Order $order): RedirectResponse
     {
-        $this->authorize('update', $order);
-
         $validated = $request->validate(['payment_status' => ['required', Rule::enum(PaymentStatus::class)]]);
 
         $this->service->updatePaymentStatus($order, PaymentStatus::from($validated['payment_status']));

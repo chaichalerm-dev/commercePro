@@ -75,28 +75,25 @@ class SettingController extends Controller
 
         foreach (self::FILE_KEYS as $key) {
             if ($request->hasFile($key)) {
-                $old = Setting::get($key);
-
-                if (filled($old) && ! Str::startsWith((string) $old, ['http://', 'https://'])) {
-                    Storage::disk(config('filesystems.default'))->delete((string) $old);
-                }
-
+                $old = (string) Setting::get($key);
                 $file = $request->file($key);
                 $disk = config('filesystems.default');
 
-                $cacheControl = ['CacheControl' => 'public, max-age=31536000, immutable'];
-
                 if (strtolower((string) $file->getClientOriginalExtension()) === 'svg') {
+                    ImageOptimizer::delete($old, $disk);
                     $path = 'settings/'.Str::uuid()->toString().'.svg';
-                    Storage::disk($disk)->put($path, self::sanitizeSvg((string) file_get_contents($file->getRealPath())), $cacheControl);
+                    Storage::disk($disk)->put($path, self::sanitizeSvg((string) file_get_contents($file->getRealPath())), [
+                        'CacheControl' => 'public, max-age=31536000, immutable',
+                    ]);
                     Setting::set($key, $path, 'general');
                 } elseif ($key === 'logo') {
+                    Setting::set($key, ImageOptimizer::store($file, 'settings', $disk, maxWidth: 512, maxHeight: 512, quality: 90, replacing: $old), 'general');
+                } else {
                     // Favicon is left untouched: it's already capped at 512KB
                     // by validation, and .ico isn't something GD can decode
                     // anyway, so there's nothing worth optimizing there.
-                    Setting::set($key, ImageOptimizer::store($file, 'settings', $disk, maxWidth: 512, maxHeight: 512, quality: 90), 'general');
-                } else {
-                    Setting::set($key, $file->store('settings', ['disk' => $disk, ...$cacheControl]), 'general');
+                    ImageOptimizer::delete($old, $disk);
+                    Setting::set($key, $file->store('settings', ['disk' => $disk, 'CacheControl' => 'public, max-age=31536000, immutable']), 'general');
                 }
             }
         }

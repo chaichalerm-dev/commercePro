@@ -18,8 +18,17 @@ use Illuminate\Support\Str;
  */
 class ImageOptimizer
 {
-    public static function store(UploadedFile $file, string $dir, string $disk, int $maxWidth, int $maxHeight, int $quality = 82): string
+    /**
+     * @param  ?string  $replacing  path of the file this upload replaces, if any —
+     *                              deleted first (see delete()) so admin edits don't
+     *                              leak orphaned files on the disk.
+     */
+    public static function store(UploadedFile $file, string $dir, string $disk, int $maxWidth, int $maxHeight, int $quality = 82, ?string $replacing = null): string
     {
+        if ($replacing !== null) {
+            self::delete($replacing, $disk);
+        }
+
         [$contents, $extension] = self::process($file, $maxWidth, $maxHeight, $quality);
 
         $path = trim($dir, '/').'/'.Str::uuid()->toString().'.'.$extension;
@@ -33,6 +42,19 @@ class ImageOptimizer
         ]);
 
         return $path;
+    }
+
+    /**
+     * Delete a stored file, skipping external URLs (demo/seed data, which
+     * has nothing to delete). Shared by every controller/service that
+     * replaces or removes an uploaded image, so the "is this a local path
+     * or a passthrough URL" check exists in exactly one place.
+     */
+    public static function delete(?string $path, string $disk): void
+    {
+        if (filled($path) && ! Str::startsWith($path, ['http://', 'https://'])) {
+            Storage::disk($disk)->delete($path);
+        }
     }
 
     /**

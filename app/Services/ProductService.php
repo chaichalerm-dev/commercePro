@@ -11,7 +11,6 @@ use App\Support\HomeCache;
 use App\Support\ImageOptimizer;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductService
@@ -53,8 +52,7 @@ class ProductService
     {
         return DB::transaction(function () use ($product, $data, $thumbnail, $gallery, $variants, $removedImageIds): Product {
             if ($thumbnail !== null) {
-                $this->deleteImageFile($product->thumbnail);
-                $data['thumbnail'] = $this->storeImage($thumbnail);
+                $data['thumbnail'] = $this->storeImage($thumbnail, replacing: $product->thumbnail);
             }
 
             $product->fill($data);
@@ -162,19 +160,14 @@ class ProductService
         $product->variants()->whereKeyNot($keptIds)->delete();
     }
 
-    protected function storeImage(UploadedFile $file): string
+    protected function storeImage(UploadedFile $file, ?string $replacing = null): string
     {
-        return ImageOptimizer::store($file, self::IMAGE_DIR, config('filesystems.default'), maxWidth: 1600, maxHeight: 1600);
+        return ImageOptimizer::store($file, self::IMAGE_DIR, config('filesystems.default'), maxWidth: 1600, maxHeight: 1600, replacing: $replacing);
     }
 
-    /**
-     * Remove a stored file; external URLs (seed data) have nothing to delete.
-     */
     protected function deleteImageFile(?string $path): void
     {
-        if (filled($path) && ! Str::startsWith($path, ['http://', 'https://'])) {
-            Storage::disk(config('filesystems.default'))->delete($path);
-        }
+        ImageOptimizer::delete($path, config('filesystems.default'));
     }
 
     protected function generateVariantSku(): string
