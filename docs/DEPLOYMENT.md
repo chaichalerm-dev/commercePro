@@ -2,6 +2,8 @@
 
 ShopSmart runs anywhere PHP 8.4 does. The database is already remote (Supabase), so the app tier is stateless apart from `storage/app/public` uploads.
 
+> ⚠️ **If local development points `.env` at the same Supabase project as this production deployment** (common for a solo/portfolio setup that only has one Supabase project), there is no safety net between a local `migrate:fresh`, `db:seed`, or manual `DELETE` and production data — they're the same database. Confirm which Supabase project a given `.env` points to (`DB_HOST`/`DB_USERNAME` contains the project ref) before running anything destructive.
+
 ## Production Environment Variables
 
 ```dotenv
@@ -136,6 +138,10 @@ The app is set up to use **Supabase Storage** (S3-compatible, same Supabase proj
 
 Alternative: attach a Render **persistent Disk** mounted at `storage/app/public` instead (requires a paid plan, not available on Free) — simpler if you'd rather not touch storage config at all, but ties you to Render specifically rather than a portable S3-compatible target.
 
+### Image optimization and caching
+
+Product/category/banner/logo uploads are resized (never upscaled) and re-encoded to WebP on upload via `App\Support\ImageOptimizer` (GD-based), and get a `Cache-Control: public, max-age=31536000, immutable` header — set as S3 object metadata when `FILESYSTEM_DISK=s3`, or via `public/.htaccess` (`mod_expires`/`mod_headers`, both enabled in the `Dockerfile`) when serving from local disk. This only affects **new** uploads — files already stored before this pipeline existed keep their original size/format until re-uploaded. `mod_deflate` is also enabled for text-asset compression (HTML/CSS/JS), unrelated to images (which are already compressed formats).
+
 ## Post-deploy Checklist
 
 - [ ] `APP_DEBUG=false`, `APP_ENV=production`, fresh `APP_KEY`
@@ -144,4 +150,4 @@ Alternative: attach a Render **persistent Disk** mounted at `storage/app/public`
 - [ ] Queue worker alive (place a test order → confirmation email sends)
 - [ ] Scheduler ticking (`schedule:run` logs)
 - [ ] `/robots.txt` and `/sitemap.xml` resolve with the production domain
-- [ ] Demo accounts: change or remove `admin@example.com` / `user@example.com` passwords
+- [ ] Demo accounts: the login page never prints their passwords in production (hard-excluded regardless of the `show_demo_credentials` setting), but the seeded password is still `password` and guessable from this public repo's source — change or remove `admin@example.com` / `user@example.com` passwords if the deployment holds any real data

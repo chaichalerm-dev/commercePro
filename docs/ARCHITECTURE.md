@@ -33,7 +33,7 @@ Responses go back through **API Resources / Blade views**, with flash messages a
 | Policies | `app/Policies` | Authorization per model | Checked in controllers/requests |
 | Enums | `app/Enums` | Type-safe statuses (`OrderStatus`, `PaymentStatus`, `UserRole`, `ProductStatus`) | No hardcoded status strings anywhere |
 | Traits | `app/Traits` | Shared model behavior (`HasSlug`, `LogsActivity`) | DRY across models |
-| Helpers | `app/Support/helpers.php` | Tiny global formatting helpers (`money()`) | Keep minimal |
+| Support | `app/Support` | Tiny global formatting helpers (`money()`) plus small self-contained utilities (`ImageOptimizer` — resize/re-encode uploads) | Keep minimal; promote to a Service if it grows business logic |
 | Views | `resources/views` (`layouts/`, `components/`, `storefront/`, `admin/`) | Presentation | Blade components for reuse |
 
 ## Key Decisions

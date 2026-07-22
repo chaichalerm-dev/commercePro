@@ -41,13 +41,15 @@ erDiagram
     wishlists { bigint id PK; bigint user_id FK; bigint product_id FK }
     cart_items { bigint id PK; bigint user_id FK; varchar session_id; bigint product_id FK; bigint product_variant_id FK; int qty }
     coupons { bigint id PK; varchar code UK; varchar type; numeric value; numeric min_order; int max_uses; int used_count; timestamptz starts_at; timestamptz expires_at; boolean is_active }
-    banners { bigint id PK; varchar title; varchar subtitle; varchar image; varchar link; varchar position; int sort_order; boolean is_active }
+    banners { bigint id PK; varchar title; varchar subtitle; boolean show_title; varchar image; varchar link; varchar position; int sort_order; boolean is_active }
     notifications { uuid id PK; varchar type; bigint notifiable_id; jsonb data; timestamptz read_at }
     settings { bigint id PK; varchar key UK; text value; varchar group }
     activity_logs { bigint id PK; bigint user_id FK; varchar action; varchar subject_type; bigint subject_id; jsonb properties; varchar ip_address }
 ```
 
 Framework tables (`password_reset_tokens`, `sessions`, `jobs`, `job_batches`, `failed_jobs`, `cache`, `cache_locks`) use Laravel's stock migrations.
+
+The whole schema above (app tables + framework tables) lives in a single migration file, `database/migrations/0001_01_01_000000_create_shopsmart_schema.php`, consolidated from what was originally 20 separate per-table migrations so a fresh install is one `php artisan migrate` away from a working schema.
 
 ## Design Notes
 
