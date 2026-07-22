@@ -18,7 +18,7 @@ ShopSmart is a portfolio e-commerce app: Laravel 12 + PHP 8.4, PostgreSQL via Su
 - **Never commit unless explicitly asked.** The user says "อัพ git" (or similar) when ready; work accumulates uncommitted between requests otherwise.
 - **Verify, don't assume.** Every claim of "fixed" or "working" in this project's history was backed by an actual test: `composer quality` (Pint + PHPStan + PHPUnit), and for UI/display bugs, an actual browser check (`mcp__claude-in-chrome__*` tools) — screenshot and/or network-request inspection, not just "the code looks right." Several real bugs in this codebase were only caught this way (see Known gotchas below).
 - **Root-cause over patching symptoms.** E.g. a missing-nonce test failure led to discovering a genuine Laravel routing gap (see below) rather than being silenced with a null-coalesce.
-- Baseline test state is **94 passed / 5 failed** — the 5 failures are pre-existing and unrelated to whatever you're working on (login-portal/cart-merge edge cases). If you see exactly this count after a change, you haven't regressed anything.
+- Baseline test state is **99 passed / 5 failed** (was 94 before `tests/Unit/CouponTest.php` gained coverage for the redemption-window/max-uses/min-order branches, 2026-07-22) — the 5 failures are pre-existing and unrelated to whatever you're working on (login-portal/cart-merge edge cases). If you see exactly this count after a change, you haven't regressed anything.
 
 ## Known gotchas (found the hard way — don't rediscover these)
 
@@ -62,5 +62,5 @@ All password `password`: `admin@example.com` (Owner), `manager@example.com` (Adm
 ## Before calling something done
 
 1. `C:/php84/composer.bat format` (Pint) and `C:/php84/composer.bat analyse` (PHPStan level 6) — both must be clean.
-2. `C:/php84/php.exe artisan test` — expect 94 passed / 5 pre-existing failures; anything else is a regression to investigate.
+2. `C:/php84/php.exe artisan test` — expect 99 passed / 5 pre-existing failures; anything else is a regression to investigate.
 3. For anything touching a view, layout, or asset pipeline: actually load it in a browser and check the network tab / console, not just the rendered HTML from `curl`. Several bugs in this project's history (broken images, CSP violations, missing security headers on 404s) were invisible to a plain HTTP status check and only surfaced visually or in `read_network_requests`.

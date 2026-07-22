@@ -36,4 +36,68 @@ class CouponTest extends TestCase
 
         $this->assertFalse($coupon->isRedeemable(500.0));
     }
+
+    public function test_inactive_coupon_is_not_redeemable(): void
+    {
+        $coupon = new Coupon([
+            'type' => CouponType::Fixed,
+            'value' => 100,
+            'is_active' => false,
+        ]);
+
+        $this->assertFalse($coupon->isRedeemable(500.0));
+    }
+
+    public function test_coupon_not_yet_started_is_not_redeemable(): void
+    {
+        $coupon = new Coupon([
+            'type' => CouponType::Fixed,
+            'value' => 100,
+            'is_active' => true,
+            'starts_at' => now()->addDay(),
+        ]);
+
+        $this->assertFalse($coupon->isRedeemable(500.0));
+    }
+
+    public function test_coupon_at_max_uses_is_not_redeemable(): void
+    {
+        $coupon = new Coupon([
+            'type' => CouponType::Fixed,
+            'value' => 100,
+            'is_active' => true,
+            'max_uses' => 5,
+            'used_count' => 5,
+        ]);
+
+        $this->assertFalse($coupon->isRedeemable(500.0));
+    }
+
+    public function test_coupon_below_min_order_is_not_redeemable(): void
+    {
+        $coupon = new Coupon([
+            'type' => CouponType::Fixed,
+            'value' => 100,
+            'is_active' => true,
+            'min_order' => 1000,
+        ]);
+
+        $this->assertFalse($coupon->isRedeemable(500.0));
+    }
+
+    public function test_coupon_meeting_every_condition_is_redeemable(): void
+    {
+        $coupon = new Coupon([
+            'type' => CouponType::Fixed,
+            'value' => 100,
+            'is_active' => true,
+            'starts_at' => now()->subDay(),
+            'expires_at' => now()->addDay(),
+            'max_uses' => 5,
+            'used_count' => 4,
+            'min_order' => 100,
+        ]);
+
+        $this->assertTrue($coupon->isRedeemable(500.0));
+    }
 }
